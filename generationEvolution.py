@@ -1,5 +1,6 @@
 import threading
 import geneticAction as GA
+import snakeGame as SG
 from tqdm import tqdm
 
 class Evolution():
@@ -7,7 +8,8 @@ class Evolution():
     def __init__(self, brainNum, generations, threadNum):
 
         self.brainNum = brainNum
-        self.brain_list = GA.generate(brainNum, False)
+        self.brainList = GA.generate(self.brainNum, False)
+        self.snakeGame = SG.SnakeGame()
         self.generations = generations
         self.threadNum = threadNum
         self.lock = threading.Lock()
@@ -23,7 +25,7 @@ class Evolution():
         for index in range(self.num):
             score = 0
             for _ in range(self.avg): # play four times each brain
-                score += self.play(brains[index])
+                score += self.snakeGame.play(brains[index])
             score /= self.avg # average
 
             self.lock.acquire()
@@ -32,11 +34,11 @@ class Evolution():
 
     def evolve(self):
         
-        for gen in tqdm(range(self.generations)):
+        for gen in tqdm(range(self.generations), disable=True):
 
             threads = []
             for i in range(self.threadNum):
-                thread = threading.Thread(target=self.subEvolve, args=(self.brain_list[i*self.num:(i+1)*self.num],))
+                thread = threading.Thread(target=self.subEvolve, args=(self.brainList[i*self.num:(i+1)*self.num],))
                 thread.start()
                 threads.append(thread)
 
@@ -47,5 +49,5 @@ class Evolution():
             #best_model.save("best_model.h5")
 
             # reset next generation
-            self.brain_list = next_gen
+            self.brainList = next_gen
             self.gen_score = [] 

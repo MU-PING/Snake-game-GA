@@ -12,9 +12,9 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 """
 
 if __name__ == '__main__':
-    brainNum = 1000
+    brainNum = 1
     generations = 1000
-    threadNum = 5
+    threadNum = 1
 
     print("Initializing generation...")
     evolution = Evolution(brainNum, generations, threadNum)
