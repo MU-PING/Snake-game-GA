@@ -1,15 +1,15 @@
 import random
 from tqdm import tqdm
-from keras.models import Sequential
-from keras.layers import Dense
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Dense
 
 def generate(population, disable=True):
 
     brains = []
     for _ in tqdm(range(population), disable=disable):
         model = Sequential()
-        model.add(Dense(units=24, input_dim=40, kernel_initializer='normal', activation='relu', bias_initializer='normal'))
-        model.add(Dense(units=16, kernel_initializer='normal', activation='relu', bias_initializer='normal'))
+        model.add(Dense(units=64, input_shape=(2500,), kernel_initializer='normal', activation='relu', bias_initializer='normal'))
+        model.add(Dense(units=32, kernel_initializer='normal', activation='relu', bias_initializer='normal'))
         model.add(Dense(units=4, kernel_initializer='normal', activation='softmax', bias_initializer='normal'))
         brains.append(model)
 
@@ -53,54 +53,35 @@ def mutate(model, mutate_rate = 0.1):
 
     model.set_weights(weight)
 
-def get_next_gen(gen_score): #gen_score: tuple (brain, score)
+def get_next_gen(gen_score): #gen_score: [brain, score]
     gen_score.sort(key= lambda x: x[1], reverse=True) # sorted by score
     
     best_model = gen_score[0][0]
     best_score = gen_score[0][1]
     
     next_gen = []
-    for i in range(100):
+    for i in range(20):
         next_gen.append(gen_score[i][0])
         
     #crossover no1 no2
-    son = crossover(gen_score[0][0], gen_score[1][0], 200)    
-    for i in range(len(son)):
-        next_gen.append(son[i])
+    son = crossover(gen_score[0][0], gen_score[1][0], 60)    
+    next_gen += son
     
     #crossover no1 no3
-    son = crossover(gen_score[0][0], gen_score[2][0], 200)    
-    for i in range(len(son)):
-        next_gen.append(son[i])
-        
-    #crossover no1 no4
-    son = crossover(gen_score[0][0], gen_score[3][0], 200)    
-    for i in range(len(son)):
-        next_gen.append(son[i])
+    son = crossover(gen_score[0][0], gen_score[2][0], 50)    
+    next_gen += son
         
     #crossover no2 no3
-    son = crossover(gen_score[1][0], gen_score[2][0], 200)    
-    for i in range(len(son)):
-        next_gen.append(son[i])    
+    son = crossover(gen_score[1][0], gen_score[2][0], 40)    
+    next_gen += son
     
     #crossover no2 no4
-    son = crossover(gen_score[1][0], gen_score[3][0], 400)    
-    for i in range(len(son)):
-        next_gen.append(son[i])
+    son = crossover(gen_score[1][0], gen_score[3][0], 30)    
+    next_gen += son
         
-    #crossover no3 no4
-    son = crossover(gen_score[2][0], gen_score[3][0], 300)    
-    for i in range(len(son)):
-        next_gen.append(son[i])
-    
-    #crossover no3 no5
-    son = crossover(gen_score[2][0], gen_score[4][0], 300)    
-    for i in range(len(son)):
-        next_gen.append(son[i])
-        
-    for i in range(len(next_gen)): #top 100 unmutated
-        if i > 100:
-            if random.random() < 0.15: # mutate rate = 0.15
-                mutate(next_gen[i])
-             
+    for i in range(len(gen_score)):
+        if i > 4:
+            if random.random() < 0.10: # mutate rate = 0.15
+                mutate(gen_score[i][0])       
+
     return next_gen, best_score, best_model

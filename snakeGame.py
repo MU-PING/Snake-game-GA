@@ -1,54 +1,51 @@
-import pygame
-import numpy as np
 import random
-import threading
-
-
+import numpy as np
+import gameGUI as GG
 class Frames():
     
-    def __init__(self, snake_position, apple_position):
+    def __init__(self, snake_position, apple_position, size):
 
-        self.map = np.zeros((50, 50))
+        self.feedback = np.zeros((size, size))
         self.snake_position = snake_position
         self.apple_position = apple_position
         self.crashed = False
         self.score = 0
         self.alive = 0
-        self.leftstep = 300
+        self.leftstep = 100
 
         # direction
         self.prev_direction = 1 
         self.direction = 1
 
-        # init map 0=background 1=snake 2=apple
+        # init feedback 0=background 1=snake 2=apple
         for body in self.snake_position:
-            self.map[body[0], body[1]] = 1
+            self.feedback[body[0], body[1]] = 1
         
-        self.map[self.apple_position[0], self.apple_position[1]] = 2
+        self.feedback[self.apple_position[0], self.apple_position[1]] = 2
 
 class SnakeGame():
 
     def __init__(self):
         self.display_size = 50
         self.start = int(self.display_size / 2)
-        self.lock = threading.Lock()
+        self.gameGUI = GG.GameGUI(self.display_size)
 
     def play(self, brain):
         
         snake_position = [[self.start, self.start], [self.start-1, self.start], [self.start-2, self.start]]
         apple_position = self.generate_apple()
-        frames = Frames(snake_position, apple_position)
+        frames = Frames(snake_position, apple_position, self.display_size)
 
         while frames.leftstep > 0:
             frames.alive += 1
             frames.leftstep -= 1
-            #feedback = np.array(self.direction_sensor(frames).reshape(1, -1).astype('float32'))
+            feedback = frames.feedback.reshape(1, -1)
+            self.gameGUI.update(frames)
             
-            self.lock.acquire()
-            direction = 0
-            #direction = brain.predict_classes(feedback)[0] # brain predict next direction
-            self.lock.release()
-
+            # What's the difference between Model methods predict() and __call__()?(Google) 
+            predict_direction = brain.predict(feedback) # brain predict next direction
+            direction = np.argmax(predict_direction, axis=1)[0]
+            
             self.next_frame(frames, direction)
 
             if frames.crashed==True: break;
@@ -81,13 +78,13 @@ class SnakeGame():
         # collision with apple -----------------------
         if snake_head == frames.apple_position:
             frames.apple_position = self.generate_apple() 
-            frames.map[frames.apple_position[0], frames.apple_position[1]] = 2
+            frames.feedback[frames.apple_position[0], frames.apple_position[1]] = 2
             frames.score += 100
             frames.leftstep += 50
     
         else:
             discard = frames.snake_position.pop()
-            frames.map[discard[0], discard[1]] = 0
+            frames.feedback[discard[0], discard[1]] = 0
 
         # collision with self ----------------------------
         if snake_head in frames.snake_position[1:]:
@@ -99,25 +96,8 @@ class SnakeGame():
 
         if not frames.crashed:
             frames.snake_position.insert(0, snake_head)
-            frames.map[snake_head[0], snake_head[1]] = 1
+            frames.feedback[snake_head[0], snake_head[1]] = 1
 
     def generate_apple(self):
         return [random.randrange(0, self.display_size), random.randrange(0, self.display_size)]
     
-    def direction_sensor(self, frames):
-        pass
-        # top 
-
-        # top left 
-
-        # top right 
-
-        # left 
-
-        # right 
-
-        # bottom
-
-        # bottom left
-
-        # bottom right 
