@@ -8,8 +8,8 @@ def generate(population, disable=True):
     brains = []
     for _ in tqdm(range(population), disable=disable):
         model = Sequential()
-        model.add(Dense(units=64, input_shape=(2500,), kernel_initializer='normal', activation='relu', bias_initializer='normal'))
-        model.add(Dense(units=32, kernel_initializer='normal', activation='relu', bias_initializer='normal'))
+        model.add(Dense(units=16, input_shape=(24,), kernel_initializer='normal', activation='relu', bias_initializer='normal'))
+        model.add(Dense(units=16, kernel_initializer='normal', activation='relu', bias_initializer='normal'))
         model.add(Dense(units=4, kernel_initializer='normal', activation='softmax', bias_initializer='normal'))
         brains.append(model)
 
@@ -34,7 +34,7 @@ def crossover(mom, dad, son_population):
         son[count].set_weights(son_weight)
     return son
 
-def mutate(model, mutate_rate = 0.1):
+def mutate(model, mutate_rate = 0.15):
 
     weight = model.get_weights()
     
@@ -43,10 +43,10 @@ def mutate(model, mutate_rate = 0.1):
             if weight[i][j].ndim > 0:
                 for k in range(len(weight[i][j])):
                     if random.random() < mutate_rate:                        
-                        weight[i][j, k] += random.gauss(0, 0.4)
+                        weight[i][j, k] += random.gauss(0, 0.6)
             else:
                 if random.random() < mutate_rate:                        
-                        weight[i][j] += random.gauss(0, 0.4)
+                        weight[i][j] += random.gauss(0, 0.6)
     
     # a is ndarray, a[i][j] is inefficient than a[i, j] because of new temporary array (google "numpy view vs copy")
     # a = a*2 is inefficient than a *= 2 because of new temporary array or variable
@@ -81,7 +81,7 @@ def get_next_gen(gen_score): #gen_score: [brain, score]
         
     for i in range(len(gen_score)):
         if i > 4:
-            if random.random() < 0.10: # mutate rate = 0.15
+            if random.random() < 0.2: # mutate rate = 0.15
                 mutate(gen_score[i][0])       
 
     return next_gen, best_score, best_model
