@@ -27,7 +27,7 @@ class Frames():
 class SnakeGame():
 
     def __init__(self):
-        self.display_size = 50
+        self.display_size = 30
         self.start = int(self.display_size / 2)
         self.gameGUI = GG.GameGUI(self.display_size)
 
@@ -55,7 +55,7 @@ class SnakeGame():
 
             if frames.crashed==True: break;
 
-        return frames.score + frames.alive*0.01
+        return frames.score + frames.alive
 
     def next_frame(self, frames, direction):
 

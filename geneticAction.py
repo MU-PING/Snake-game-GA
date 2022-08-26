@@ -34,7 +34,7 @@ def crossover(mom, dad, son_population):
         son[count].set_weights(son_weight)
     return son
 
-def mutate(model, mutate_rate = 0.15):
+def mutate(model, mutate_rate = 0.1):
 
     weight = model.get_weights()
     
@@ -43,10 +43,10 @@ def mutate(model, mutate_rate = 0.15):
             if weight[i][j].ndim > 0:
                 for k in range(len(weight[i][j])):
                     if random.random() < mutate_rate:                        
-                        weight[i][j, k] += random.gauss(0, 0.6)
+                        weight[i][j, k] += random.gauss(0, 0.4)
             else:
                 if random.random() < mutate_rate:                        
-                        weight[i][j] += random.gauss(0, 0.6)
+                        weight[i][j] += random.gauss(0, 0.4)
     
     # a is ndarray, a[i][j] is inefficient than a[i, j] because of new temporary array (google "numpy view vs copy")
     # a = a*2 is inefficient than a *= 2 because of new temporary array or variable
@@ -80,8 +80,8 @@ def get_next_gen(gen_score): #gen_score: [brain, score]
     next_gen += son
         
     for i in range(len(gen_score)):
-        if i > 4:
-            if random.random() < 0.2: # mutate rate = 0.15
+        if i > 5:
+            if random.random() < 0.15: # mutate rate = 0.15
                 mutate(gen_score[i][0])       
 
     return next_gen, best_score, best_model
