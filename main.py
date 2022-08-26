@@ -2,7 +2,7 @@ import sys
 import os
 from generationEvolution import *
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1' 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' 
 
 """
 0 = all messages are logged (default behavior)

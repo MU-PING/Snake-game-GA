@@ -48,7 +48,7 @@ class SnakeGame():
             feedback = np.array(feedback_apple + feedback_snake + feedback_wall)
             
             # What's the difference between Model methods predict() and __call__()?(Google) 
-            predict_direction = brain.predict(feedback.reshape(1, -1)) # brain predict next direction
+            predict_direction = brain.predict(feedback.reshape(1, -1), verbose=0) # brain predict next direction
             direction = np.argmax(predict_direction, axis=1)[0]
             
             self.next_frame(frames, direction)
