@@ -1,7 +1,20 @@
+import os 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' 
+"""
+0 = all messages are logged (default behavior)
+1 = INFO messages are not printed
+2 = INFO and WARNING messages are not printed
+3 = INFO, WARNING, and ERROR messages are not printed
+Must be in the same file as tensorflow and before tensorflow is imported
+"""
+
 import random
+import numpy as np
 from tqdm import tqdm
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense
+
+
 
 def generate(population, disable=True):
 
@@ -58,6 +71,7 @@ def get_next_gen(gen_score): #gen_score: [brain, score]
     
     best_model = gen_score[0][0]
     best_score = gen_score[0][1]
+    average_score = np.mean([score[1] for score in gen_score])
     
     next_gen = []
     for i in range(40):
@@ -88,4 +102,7 @@ def get_next_gen(gen_score): #gen_score: [brain, score]
             if random.random() < 0.15: # mutate rate = 0.15
                 mutate(next_gen[i])       
 
-    return next_gen, best_score, best_model
+    return next_gen, best_score, best_model, average_score
+
+    
+    

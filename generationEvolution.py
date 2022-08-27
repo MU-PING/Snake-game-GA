@@ -12,7 +12,7 @@ class Evolution():
         self.snakeGame = SG.SnakeGame()
         self.generations = generations
         self.gen_score = []
-        self.avg = 3
+        self.avg = 1
 
     def evolve(self):
         
@@ -27,9 +27,10 @@ class Evolution():
 
                 self.gen_score.append([self.brainList[index], score])
 
-            next_gen, best_score, best_model = GA.get_next_gen(self.gen_score)
+            next_gen, best_score, best_model, average_score = GA.get_next_gen(self.gen_score)
             print("Best Score: " + str(best_score))
-            # best_model.save("best_model.h5")
+            print("Avgerage Score: " + str(average_score))
+            best_model.save("best_model.h5")
 
             # reset next generation
             self.brainList = next_gen
