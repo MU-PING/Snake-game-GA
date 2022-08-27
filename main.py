@@ -12,8 +12,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 """
 
 if __name__ == '__main__':
-    brainNum = 200
-    generations = 800
+    brainNum = 400
+    generations = 1000
 
     print("Initializing generation...")
     evolution = Evolution(brainNum, generations)

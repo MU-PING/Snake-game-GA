@@ -8,7 +8,7 @@ def generate(population, disable=True):
     brains = []
     for _ in tqdm(range(population), disable=disable):
         model = Sequential()
-        model.add(Dense(units=16, input_shape=(24,), kernel_initializer='normal', activation='relu', bias_initializer='normal'))
+        model.add(Dense(units=32, input_shape=(24,), kernel_initializer='normal', activation='relu', bias_initializer='normal'))
         model.add(Dense(units=16, kernel_initializer='normal', activation='relu', bias_initializer='normal'))
         model.add(Dense(units=4, kernel_initializer='normal', activation='softmax', bias_initializer='normal'))
         brains.append(model)
@@ -60,15 +60,19 @@ def get_next_gen(gen_score): #gen_score: [brain, score]
     best_score = gen_score[0][1]
     
     next_gen = []
-    for i in range(20):
+    for i in range(40):
         next_gen.append(gen_score[i][0])
         
     #crossover no1 no2
-    son = crossover(gen_score[0][0], gen_score[1][0], 60)    
+    son = crossover(gen_score[0][0], gen_score[1][0], 100)    
     next_gen += son
     
     #crossover no1 no3
-    son = crossover(gen_score[0][0], gen_score[2][0], 50)    
+    son = crossover(gen_score[0][0], gen_score[2][0], 100)    
+    next_gen += son
+        
+    #crossover no1 no4
+    son = crossover(gen_score[0][0], gen_score[3][0], 80)    
     next_gen += son
         
     #crossover no2 no3
@@ -76,12 +80,12 @@ def get_next_gen(gen_score): #gen_score: [brain, score]
     next_gen += son
     
     #crossover no2 no4
-    son = crossover(gen_score[1][0], gen_score[3][0], 30)    
+    son = crossover(gen_score[1][0], gen_score[3][0], 40)    
     next_gen += son
         
     for i in range(len(gen_score)):
-        if i > 5:
+        if i > 20:
             if random.random() < 0.15: # mutate rate = 0.15
-                mutate(gen_score[i][0])       
+                mutate(next_gen[i])       
 
     return next_gen, best_score, best_model

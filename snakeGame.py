@@ -12,7 +12,7 @@ class Frames():
         self.crashed = False
         self.score = 0
         self.alive = 0
-        self.leftstep = 100
+        self.leftstep = 120
 
         # direction
         self.prev_direction = 1 
@@ -27,7 +27,7 @@ class Frames():
 class SnakeGame():
 
     def __init__(self):
-        self.display_size = 30
+        self.display_size = 40
         self.start = int(self.display_size / 2)
         self.gameGUI = GG.GameGUI(self.display_size)
 
@@ -85,7 +85,7 @@ class SnakeGame():
             frames.apple_position = self.generate_apple(frames.snake_position) 
             frames.map[frames.apple_position[0], frames.apple_position[1]] = 2
             frames.score += 100
-            frames.leftstep += 50
+            frames.leftstep += 120
     
         else:
             discard = frames.snake_position.pop()
