@@ -1,7 +1,9 @@
 import threading
 import geneticAction as GA
 import snakeGame as SG
+import matplotlib.pyplot as plt
 from tqdm import tqdm
+
 
 class Evolution():
 
@@ -16,6 +18,9 @@ class Evolution():
 
     def evolve(self):
         
+        all_best_score = []
+        all_average_score = []
+        
         for gen in tqdm(range(1, self.generations+1), disable=True):
 
             print("\nGenerations: " + str(gen))
@@ -28,10 +33,24 @@ class Evolution():
                 self.gen_score.append([self.brainList[index], score])
 
             next_gen, best_score, best_model, average_score = GA.get_next_gen(self.gen_score)
+            
             print("Best Score: " + str(best_score))
             print("Avgerage Score: " + str(average_score))
+            all_best_score.append(best_score)
+            all_average_score.append(average_score)
             best_model.save_weights("bestModel.h5")
 
             # reset next generation
             self.brainList = next_gen
             self.gen_score = [] 
+        
+        
+        plt.figure(figsize=(8,5))
+        plt.title("Score evolving")
+        plt.xlabel("Generation")
+        plt.ylabel("Score")
+        plt.legend()
+        plt.plot(all_best_score, label="Best")
+        plt.plot(all_average_score, label="Average")
+        plt.show()
+        
