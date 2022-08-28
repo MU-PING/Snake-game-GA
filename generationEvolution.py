@@ -16,7 +16,7 @@ class Evolution():
 
     def evolve(self):
         
-        for gen in tqdm(range(self.generations), disable=True):
+        for gen in tqdm(range(1, self.generations+1), disable=True):
 
             print("\nGenerations: " + str(gen))
             for index in tqdm(range(self.brainNum)):
@@ -30,7 +30,7 @@ class Evolution():
             next_gen, best_score, best_model, average_score = GA.get_next_gen(self.gen_score)
             print("Best Score: " + str(best_score))
             print("Avgerage Score: " + str(average_score))
-            best_model.save("best_model.h5")
+            best_model.save_weights("bestModel.h5")
 
             # reset next generation
             self.brainList = next_gen

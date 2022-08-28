@@ -36,7 +36,7 @@ class GameGUI():
             pygame.draw.rect(self.display, self.snake_color, pygame.Rect(position[0]*10, position[1]*10, 10, 10))
         
         pygame.draw.rect(self.display, self.apple_color, pygame.Rect(frame.apple_position[0]*10, frame.apple_position[1]*10, 10, 10))
-        pygame.display.set_caption('Snake Game - Genetic Algorithm - Score: '+ str(frame.score))
+        pygame.display.set_caption('Snake Game -  Score: '+ str(frame.score))
         
     def drawGrid(self):
         blockSize = 10
