@@ -10,7 +10,7 @@ class Frames():
         self.snake_position = snake_position
         self.apple_position = apple_position
         self.crashed = False
-        self.score = 0
+        self.apple = 0
         self.alive = 0
         self.leftstep = 120
 
@@ -55,7 +55,7 @@ class SnakeGame():
 
             if frames.crashed==True: break;
 
-        return frames.score + frames.alive
+        return frames.apple + frames.alive
 
     def next_frame(self, frames, direction):
 
@@ -84,7 +84,7 @@ class SnakeGame():
         if snake_head == frames.apple_position:
             frames.apple_position = self.generate_apple(frames.snake_position) 
             frames.map[frames.apple_position[0], frames.apple_position[1]] = 2
-            frames.score += 100
+            frames.apple += 100
             frames.leftstep += 120
     
         else:

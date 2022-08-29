@@ -23,20 +23,20 @@ class GameGUI():
         self.snake_color = (0, 139, 0)
         self.sensor_color = (135, 206, 255)
 
-    def drawFrame(self, frame):
+    def drawFrame(self, frames):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                frame.crashed = True
+                frames.crashed = True
 
         pygame.draw.rect(self.display, self.ground_color, pygame.Rect(0, 0, self.size, self.size))
         self.drawGrid()
         
-        for position in frame.snake_position:
+        for position in frames.snake_position:
             pygame.draw.rect(self.display, self.snake_color, pygame.Rect(position[0]*10, position[1]*10, 10, 10))
         
-        pygame.draw.rect(self.display, self.apple_color, pygame.Rect(frame.apple_position[0]*10, frame.apple_position[1]*10, 10, 10))
-        pygame.display.set_caption('Snake Game -  Score: '+ str(frame.score))
+        pygame.draw.rect(self.display, self.apple_color, pygame.Rect(frames.apple_position[0]*10, frames.apple_position[1]*10, 10, 10))
+        pygame.display.set_caption('Snake Game -  Score: '+ str(frames.apple + frames.alive))
         
     def drawGrid(self):
         blockSize = 10
