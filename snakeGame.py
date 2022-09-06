@@ -27,7 +27,7 @@ class Frames():
 class SnakeGame():
 
     def __init__(self):
-        self.display_size = 40
+        self.display_size = 30
         self.start = int(self.display_size / 2)
         self.gameGUI = GG.GameGUI(self.display_size)
 
@@ -120,7 +120,7 @@ class SnakeGame():
         feedback_snake = [1, 1, 1, 1, 1, 1, 1, 1]
         feedback_wall = [1, 1, 1, 1, 1, 1, 1, 1]
 
-        map = frames.map
+        framesMap = frames.map
         snake_head_w = frames.snake_position[0][0]
         snake_head_h = frames.snake_position[0][1]
         max_step = self.display_size - 1
@@ -133,7 +133,7 @@ class SnakeGame():
                 feedback_wall[0] = step/max_step
                 break
 
-            something = map[snake_head_w, target]
+            something = framesMap[snake_head_w, target]
             if something == 1:
                 feedback_snake[0] = step/max_step
                 break
@@ -154,7 +154,7 @@ class SnakeGame():
                 feedback_wall[1] = step/max_step
                 break
 
-            something = map[target_w, target_h]
+            something = framesMap[target_w, target_h]
             if something == 1:
                 feedback_snake[1] = step/max_step
                 break
@@ -175,7 +175,7 @@ class SnakeGame():
                 feedback_wall[2] = step/max_step
                 break
 
-            something = map[target_w, target_h]
+            something = framesMap[target_w, target_h]
             if something == 1:
                 feedback_snake[2] = step/max_step
                 break
@@ -195,7 +195,7 @@ class SnakeGame():
                 feedback_wall[3] = step/max_step
                 break
 
-            something = map[target, snake_head_h]
+            something = framesMap[target, snake_head_h]
             if something == 1:
                 feedback_snake[3] = step/max_step
                 break
@@ -215,7 +215,7 @@ class SnakeGame():
                 feedback_wall[4] = step/max_step
                 break
 
-            something = map[target, snake_head_h]
+            something = framesMap[target, snake_head_h]
             if something == 1:
                 feedback_snake[4] = step/max_step
                 break
@@ -235,7 +235,7 @@ class SnakeGame():
                 feedback_wall[5] = step/max_step
                 break
 
-            something = map[snake_head_w, target]
+            something = framesMap[snake_head_w, target]
             if something == 1:
                 feedback_snake[5] = step/max_step
                 break
@@ -257,7 +257,7 @@ class SnakeGame():
                 feedback_wall[6] = step/max_step
                 break
 
-            something = map[target_w, target_h]
+            something = framesMap[target_w, target_h]
             if something == 1:
                 feedback_snake[6] = step/max_step
                 break
@@ -278,7 +278,7 @@ class SnakeGame():
                 feedback_wall[7] = step/max_step
                 break
 
-            something = map[target_w, target_h]
+            something = framesMap[target_w, target_h]
             if something == 1:
                 feedback_snake[7] = step/max_step
                 break

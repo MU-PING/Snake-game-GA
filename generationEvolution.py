@@ -14,7 +14,7 @@ class Evolution():
         self.snakeGame = SG.SnakeGame()
         self.generations = generations
         self.gen_score = []
-        self.avg = 3
+        self.avg = 2
 
     def evolve(self):
         
@@ -24,7 +24,8 @@ class Evolution():
         for gen in tqdm(range(1, self.generations+1), disable=True):
 
             print("\nGenerations: " + str(gen))
-            for index in tqdm(range(self.brainNum)):
+            for index in tqdm(range(len(self.brainList))):
+                
                 score = 0
                 for _ in range(self.avg): # play four times each brain
                     score += self.snakeGame.play(self.brainList[index])
