@@ -14,10 +14,7 @@ from tqdm import tqdm
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense
 
-
-
 def generate(population, disable=True):
-
     brains = []
     for _ in tqdm(range(population), disable=disable):
         model = Sequential()
@@ -29,7 +26,6 @@ def generate(population, disable=True):
     return brains
 
 def crossover(mom, dad, son_population):
-    
     mom_weight = mom.get_weights()
     dad_weight = dad.get_weights()
     son = generate(son_population)
@@ -48,7 +44,6 @@ def crossover(mom, dad, son_population):
     return son
 
 def mutate(model, mutate_rate = 0.12):
-
     weight = model.get_weights()
     
     for i in range(len(weight)):

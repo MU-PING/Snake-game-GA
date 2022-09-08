@@ -6,9 +6,8 @@ from tqdm import tqdm
 
 
 class Evolution():
-
+    
     def __init__(self, brainNum, generations):
-
         self.brainNum = brainNum
         self.brainList = GA.generate(self.brainNum, False)
         self.snakeGame = SG.SnakeGame()
@@ -17,7 +16,6 @@ class Evolution():
         self.avg = 2
 
     def evolve(self):
-        
         all_best_score = []
         all_average_score = []
         

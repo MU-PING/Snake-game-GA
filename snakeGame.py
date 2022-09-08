@@ -5,7 +5,6 @@ import gameGUI as GG
 class Frames():
     
     def __init__(self, snake_position, apple_position, size):
-
         self.map = np.zeros((size, size))
         self.snake_position = snake_position
         self.apple_position = apple_position
@@ -25,14 +24,13 @@ class Frames():
         self.map[self.apple_position[0], self.apple_position[1]] = 2
 
 class SnakeGame():
-
+    
     def __init__(self):
         self.display_size = 30
         self.start = int(self.display_size / 2)
         self.gameGUI = GG.GameGUI(self.display_size)
 
     def play(self, brain):
-        
         snake_position = [[self.start, self.start], [self.start-1, self.start], [self.start-2, self.start]]
         apple_position = self.generate_apple(snake_position)
         frames = Frames(snake_position, apple_position, self.display_size)
@@ -58,7 +56,6 @@ class SnakeGame():
         return frames.apple + frames.alive
 
     def next_frame(self, frames, direction):
-
         if direction == 0 and frames.prev_direction!= 1:
             frames.direction = 0
         elif direction == 1 and frames.prev_direction!= 0: 
@@ -105,7 +102,6 @@ class SnakeGame():
 
 
     def generate_apple(self, snake_position):
-
         new_apple = [random.randrange(0, self.display_size), random.randrange(0, self.display_size)]
         
         while new_apple in snake_position:
@@ -114,7 +110,6 @@ class SnakeGame():
         return new_apple
     
     def sensor(self, frames):
-
         # 0 means no (top, topleft, topright, left, right, bottom, bottomleft, bottomright)
         feedback_apple = [1, 1, 1, 1, 1, 1, 1, 1]
         feedback_snake = [1, 1, 1, 1, 1, 1, 1, 1]

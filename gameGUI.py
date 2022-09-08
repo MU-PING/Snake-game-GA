@@ -3,8 +3,8 @@ import random
 import sys
 
 class GameGUI():
+    
     def __init__(self, size):
-
         #initialize pygame modules   
         pygame.init() 
         
@@ -24,7 +24,6 @@ class GameGUI():
         self.sensor_color = (135, 206, 255)
 
     def drawFrame(self, frames):
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 frames.crashed = True
