@@ -35,7 +35,7 @@ class GameGUI():
             pygame.draw.rect(self.display, self.snake_color, pygame.Rect(position[0]*10, position[1]*10, 10, 10))
         
         pygame.draw.rect(self.display, self.apple_color, pygame.Rect(frames.apple_position[0]*10, frames.apple_position[1]*10, 10, 10))
-        pygame.display.set_caption('Snake Game -  Score: '+ str(frames.apple + frames.alive))
+        pygame.display.set_caption('Score: '+ str(frames.apple + frames.alive))
         
     def drawGrid(self):
         blockSize = 10

@@ -283,7 +283,10 @@ class SnakeGame():
                 break
             else:
                 self.gameGUI.drawSensor(target_w, target_h)
-        
+                
+        print(feedback_apple)
+        print(feedback_snake)
+        print(feedback_wall)
         self.gameGUI.update()
         
         return feedback_apple, feedback_snake, feedback_wall

@@ -18,8 +18,8 @@ def generate(population, disable=True):
     brains = []
     for _ in tqdm(range(population), disable=disable):
         model = Sequential()
-        model.add(Dense(units=32, input_shape=(24,), kernel_initializer='normal', activation='relu', bias_initializer='normal'))
-        model.add(Dense(units=24, kernel_initializer='normal', activation='relu', bias_initializer='normal'))
+        model.add(Dense(units=16, input_shape=(24,), kernel_initializer='normal', activation='relu', bias_initializer='normal'))
+        model.add(Dense(units=16, kernel_initializer='normal', activation='relu', bias_initializer='normal'))
         model.add(Dense(units=4, kernel_initializer='normal', activation='softmax', bias_initializer='normal'))
         brains.append(model)
 
@@ -43,7 +43,7 @@ def crossover(mom, dad, son_population):
         son[count].set_weights(son_weight)
     return son
 
-def mutate(model, mutate_rate = 0.12):
+def mutate(model, mutate_rate = 0.15):
     weight = model.get_weights()
     
     for i in range(len(weight)):
@@ -51,10 +51,10 @@ def mutate(model, mutate_rate = 0.12):
             if weight[i][j].ndim > 0:
                 for k in range(len(weight[i][j])):
                     if random.random() < mutate_rate:                        
-                        weight[i][j, k] += random.gauss(0, 0.45)
+                        weight[i][j, k] += random.gauss(0, 0.5)
             else:
                 if random.random() < mutate_rate:                        
-                        weight[i][j] += random.gauss(0, 0.45)
+                        weight[i][j] += random.gauss(0, 0.5)
     
     # a is ndarray, a[i][j] is inefficient than a[i, j] because of new temporary array (google "numpy view vs copy")
     # a = a*2 is inefficient than a *= 2 because of new temporary array or variable
@@ -69,32 +69,32 @@ def get_next_gen(gen_score): #gen_score: [brain, score]
     average_score = np.mean([score[1] for score in gen_score])
     
     next_gen = []
-    for i in range(200):
+    for i in range(10):
         next_gen.append(gen_score[i][0])
         
     #crossover no1 no2
-    son = crossover(gen_score[0][0], gen_score[1][0], 500)    
+    son = crossover(gen_score[0][0], gen_score[1][0], 50)    
     next_gen += son
     
     #crossover no1 no3
-    son = crossover(gen_score[0][0], gen_score[2][0], 400)    
+    son = crossover(gen_score[0][0], gen_score[2][0], 40)    
     next_gen += son
         
     #crossover no1 no4
-    son = crossover(gen_score[0][0], gen_score[3][0], 400)    
+    son = crossover(gen_score[0][0], gen_score[3][0], 40)    
     next_gen += son
         
     #crossover no2 no3
-    son = crossover(gen_score[1][0], gen_score[2][0], 300)    
+    son = crossover(gen_score[1][0], gen_score[2][0], 30)    
     next_gen += son
     
     #crossover no2 no4
-    son = crossover(gen_score[1][0], gen_score[3][0], 200)    
+    son = crossover(gen_score[1][0], gen_score[3][0], 20)    
     next_gen += son
         
     for i in range(len(gen_score)):
-        if i > 100:
-            if random.random() < 0.15: # mutate rate = 0.15
+        if i > 10:
+            if random.random() < 0.2: # mutate rate = 0.3
                 mutate(next_gen[i])       
 
     return next_gen, best_score, best_model, average_score
