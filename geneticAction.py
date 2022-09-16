@@ -18,7 +18,7 @@ def generate(population, disable=True):
     brains = []
     for _ in tqdm(range(population), disable=disable):
         model = Sequential()
-        model.add(Dense(units=16, input_shape=(24,), kernel_initializer='normal', activation='relu', bias_initializer='normal'))
+        model.add(Dense(units=24, input_shape=(24,), kernel_initializer='normal', activation='relu', bias_initializer='normal'))
         model.add(Dense(units=16, kernel_initializer='normal', activation='relu', bias_initializer='normal'))
         model.add(Dense(units=4, kernel_initializer='normal', activation='softmax', bias_initializer='normal'))
         brains.append(model)
@@ -69,7 +69,7 @@ def get_next_gen(gen_score): #gen_score: [brain, score]
     average_score = np.mean([score[1] for score in gen_score])
     
     next_gen = []
-    for i in range(10):
+    for i in range(20):
         next_gen.append(gen_score[i][0])
         
     #crossover no1 no2

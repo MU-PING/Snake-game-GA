@@ -118,7 +118,7 @@ class SnakeGame():
         framesMap = frames.map
         snake_head_w = frames.snake_position[0][0]
         snake_head_h = frames.snake_position[0][1]
-        max_step = self.display_size - 1
+        max_step = self.display_size
 
         # top
         for step in range(1, self.display_size):
@@ -284,9 +284,6 @@ class SnakeGame():
             else:
                 self.gameGUI.drawSensor(target_w, target_h)
                 
-        print(feedback_apple)
-        print(feedback_snake)
-        print(feedback_wall)
         self.gameGUI.update()
-        
+
         return feedback_apple, feedback_snake, feedback_wall
