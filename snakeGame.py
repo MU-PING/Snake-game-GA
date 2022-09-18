@@ -4,10 +4,11 @@ import gameGUI as GG
 
 class Frames():
     
-    def __init__(self, snake_position, apple_position, size):
+    def __init__(self, snake_position, rock_position, size):
+        # map 0=background 1=snake 2=apple 3=rock
         self.map = np.zeros((size, size))
         self.snake_position = snake_position
-        self.apple_position = apple_position
+        self.rock_position = rock_position
         self.crashed = False
         self.apple = 0
         self.alive = 0
@@ -17,12 +18,18 @@ class Frames():
         self.prev_direction = 1 
         self.direction = 1
 
-        # init map 0=background 1=snake 2=apple
         for body in self.snake_position:
             self.map[body[0], body[1]] = 1
-        
-        self.map[self.apple_position[0], self.apple_position[1]] = 2
 
+        for rock in self.rock_position:
+            for x in range(rock[0][0], rock[1][0]+1):
+                for y in range(rock[0][1], rock[1][1]+1):
+                    self.map[x, y] = 3
+                    
+    def set_apple(self, apple_position):
+        self.apple_position = apple_position
+        self.map[self.apple_position[0], self.apple_position[1]] = 2
+        
 class SnakeGame():
     
     def __init__(self):
@@ -31,10 +38,14 @@ class SnakeGame():
         self.gameGUI = GG.GameGUI(self.display_size)
 
     def play(self, brain):
-        snake_position = [[self.start, self.start], [self.start-1, self.start], [self.start-2, self.start]]
-        apple_position = self.generate_apple(snake_position)
-        frames = Frames(snake_position, apple_position, self.display_size)
-
+        snake_position = [[self.start, self.start], [self.start-1, self.start], [self.start-2, self.start], [self.start-3, self.start]]
+        rock_position = [[(5, 5), (10, 10)], [(28, 18), (30, 25)], [(8, 30), (15, 32)]]
+        frames = Frames(snake_position, rock_position, self.display_size)
+        
+        # init apple
+        apple_position = self.generate_apple(frames.map) 
+        frames.set_apple(apple_position)
+        
         while frames.leftstep > 0:
 
             frames.alive += 1
@@ -42,8 +53,8 @@ class SnakeGame():
             
             self.gameGUI.drawFrame(frames)
             
-            feedback_apple, feedback_snake, feedback_wall = self.sensor(frames)
-            feedback = np.array(feedback_apple + feedback_snake + feedback_wall)
+            feedback_apple, feedback_snake, feedback_rock, feedback_wall = self.sensor(frames)
+            feedback = np.array(feedback_apple + feedback_snake + feedback_rock + feedback_wall)
             
             # What's the difference between Model methods predict() and __call__()?(Google) 
             predict_direction = brain.predict(feedback.reshape(1, -1), verbose=0) # brain predict next direction
@@ -79,7 +90,7 @@ class SnakeGame():
 
         # collision with apple -----------------------
         if snake_head == frames.apple_position:
-            frames.apple_position = self.generate_apple(frames.snake_position) 
+            frames.apple_position = self.generate_apple(frames.map) 
             frames.map[frames.apple_position[0], frames.apple_position[1]] = 2
             frames.apple += 100
             frames.leftstep += 120
@@ -91,7 +102,12 @@ class SnakeGame():
         # collision with self ----------------------------
         if snake_head in frames.snake_position[1:]:
             frames.crashed = True
-
+            
+        # collision with rock ----------------------------
+        for rock in frames.rock_position:
+            if rock[0][0] <= snake_head[0] and snake_head[0] <= rock[1][0] and rock[0][1] <= snake_head[1] and snake_head[1] <= rock[1][1]:
+                frames.crashed = True
+            
         # collision with boundaries ----------------------------
         if snake_head[0] >= self.display_size or snake_head[0] < 0 or snake_head[1] >= self.display_size or snake_head[1] < 0:
             frames.crashed = True
@@ -100,19 +116,21 @@ class SnakeGame():
             frames.snake_position.insert(0, snake_head)
             frames.map[snake_head[0], snake_head[1]] = 1
 
-
-    def generate_apple(self, snake_position):
-        new_apple = [random.randrange(0, self.display_size), random.randrange(0, self.display_size)]
+    def generate_apple(self, frames_map):
+        x = random.randrange(0, self.display_size)
+        y = random.randrange(0, self.display_size)
         
-        while new_apple in snake_position:
-            new_apple = [random.randrange(0, self.display_size), random.randrange(0, self.display_size)]
+        while frames_map[x, y] != 0:
+            x = random.randrange(0, self.display_size)
+            y = random.randrange(0, self.display_size)
         
-        return new_apple
+        return [x, y]
     
     def sensor(self, frames):
         # 0 means no (top, topleft, topright, left, right, bottom, bottomleft, bottomright)
         feedback_apple = [-1, -1, -1, -1, -1, -1, -1, -1]
         feedback_snake = [-1, -1, -1, -1, -1, -1, -1, -1]
+        feedback_rock = [-1, -1, -1, -1, -1, -1, -1, -1]
         feedback_wall = [-1, -1, -1, -1, -1, -1, -1, -1]
 
         framesMap = frames.map
@@ -137,6 +155,10 @@ class SnakeGame():
                 feedback_apple[0] = step/max_step
                 break
             
+            elif something == 3:
+                feedback_rock[0] = step/max_step
+                break
+            
             else:
                 self.gameGUI.drawSensor(snake_head_w, target)
             
@@ -156,6 +178,9 @@ class SnakeGame():
 
             elif something == 2:
                 feedback_apple[1] = step/max_step
+                
+            elif something == 3:
+                feedback_rock[1] = step/max_step
                 break
             
             else:
@@ -179,6 +204,10 @@ class SnakeGame():
                 feedback_apple[2] = step/max_step
                 break
             
+            elif something == 3:
+                feedback_rock[2] = step/max_step
+                break
+            
             else:
                 self.gameGUI.drawSensor(target_w, target_h)
 
@@ -197,6 +226,10 @@ class SnakeGame():
 
             elif something == 2:
                 feedback_apple[3] = step/max_step
+                break
+            
+            elif something == 3:
+                feedback_rock[3] = step/max_step
                 break
             
             else:
@@ -219,6 +252,10 @@ class SnakeGame():
                 feedback_apple[4] = step/max_step
                 break
             
+            elif something == 3:
+                feedback_rock[4] = step/max_step
+                break
+            
             else:
                 self.gameGUI.drawSensor(target, snake_head_h)
 
@@ -238,7 +275,11 @@ class SnakeGame():
             elif something == 2:
                 feedback_apple[5] = step/max_step
                 break
-
+            
+            elif something == 3:
+                feedback_rock[5] = step/max_step
+                break
+            
             else:
                 self.gameGUI.drawSensor(snake_head_w, target)
                 
@@ -261,6 +302,10 @@ class SnakeGame():
                 feedback_apple[6] = step/max_step
                 break
             
+            elif something == 3:
+                feedback_rock[6] = step/max_step
+                break
+            
             else:
                 self.gameGUI.drawSensor(target_w, target_h)
                 
@@ -278,12 +323,17 @@ class SnakeGame():
                 feedback_snake[7] = step/max_step
                 break
 
-            if something == 2:
+            elif something == 2:
                 feedback_apple[7] = step/max_step
                 break
+            
+            elif something == 3:
+                feedback_rock[7] = step/max_step
+                break
+            
             else:
                 self.gameGUI.drawSensor(target_w, target_h)
                 
         self.gameGUI.update()
 
-        return feedback_apple, feedback_snake, feedback_wall
+        return feedback_apple, feedback_snake, feedback_rock, feedback_wall

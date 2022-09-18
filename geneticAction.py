@@ -18,7 +18,7 @@ def generate(population, disable=True):
     brains = []
     for _ in tqdm(range(population), disable=disable):
         model = Sequential()
-        model.add(Dense(units=24, input_shape=(24,), kernel_initializer='RandomNormal', activation='relu', bias_initializer='RandomNormal'))
+        model.add(Dense(units=24, input_shape=(32,), kernel_initializer='RandomNormal', activation='relu', bias_initializer='RandomNormal'))
         model.add(Dense(units=16, kernel_initializer='RandomNormal', activation='relu', bias_initializer='RandomNormal'))
         model.add(Dense(units=4, kernel_initializer='RandomNormal', activation='softmax', bias_initializer='RandomNormal'))
         brains.append(model)

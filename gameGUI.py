@@ -20,7 +20,9 @@ class GameGUI():
         # color
         self.ground_color = (193, 255, 193)
         self.apple_color = (255, 0, 0)
-        self.snake_color = (0, 139, 0)
+        self.snake_head_color = (0, 139, 0)
+        self.snake_color = (60, 179, 113)
+        self.rock_color =(105, 105, 105)
         self.sensor_color = (135, 206, 255)
 
     def drawFrame(self, frames):
@@ -31,10 +33,21 @@ class GameGUI():
         pygame.draw.rect(self.display, self.ground_color, pygame.Rect(0, 0, self.size, self.size))
         self.drawGrid()
         
-        for position in frames.snake_position:
+        # draw snake
+        pygame.draw.rect(self.display, self.snake_head_color, pygame.Rect(frames.snake_position[0][0]*10+1, frames.snake_position[0][1]*10+1, 8, 8))
+        for position in frames.snake_position[1:]:
             pygame.draw.rect(self.display, self.snake_color, pygame.Rect(position[0]*10+1, position[1]*10+1, 8, 8))
         
+        # draw apple
         pygame.draw.rect(self.display, self.apple_color, pygame.Rect(frames.apple_position[0]*10+1, frames.apple_position[1]*10+1, 8, 8))
+        
+        # draw rock
+        for rock in frames.rock_position:
+            for x in range(rock[0][0], rock[1][0]+1):
+                for y in range(rock[0][1], rock[1][1]+1):
+                    pygame.draw.rect(self.display, self.rock_color, pygame.Rect(x*10+1, y*10+1, 8, 8))
+        
+        # draw caption
         pygame.display.set_caption('Score: '+ str(frames.apple + frames.alive))
         
     def drawGrid(self):
