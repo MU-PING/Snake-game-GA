@@ -26,7 +26,7 @@ class Frames():
 class SnakeGame():
     
     def __init__(self):
-        self.display_size = 30
+        self.display_size = 40
         self.start = int(self.display_size / 2)
         self.gameGUI = GG.GameGUI(self.display_size)
 
@@ -111,9 +111,9 @@ class SnakeGame():
     
     def sensor(self, frames):
         # 0 means no (top, topleft, topright, left, right, bottom, bottomleft, bottomright)
-        feedback_apple = [1, 1, 1, 1, 1, 1, 1, 1]
-        feedback_snake = [1, 1, 1, 1, 1, 1, 1, 1]
-        feedback_wall = [1, 1, 1, 1, 1, 1, 1, 1]
+        feedback_apple = [-1, -1, -1, -1, -1, -1, -1, -1]
+        feedback_snake = [-1, -1, -1, -1, -1, -1, -1, -1]
+        feedback_wall = [-1, -1, -1, -1, -1, -1, -1, -1]
 
         framesMap = frames.map
         snake_head_w = frames.snake_position[0][0]

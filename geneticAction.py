@@ -18,9 +18,9 @@ def generate(population, disable=True):
     brains = []
     for _ in tqdm(range(population), disable=disable):
         model = Sequential()
-        model.add(Dense(units=24, input_shape=(24,), kernel_initializer='normal', activation='relu', bias_initializer='normal'))
-        model.add(Dense(units=16, kernel_initializer='normal', activation='relu', bias_initializer='normal'))
-        model.add(Dense(units=4, kernel_initializer='normal', activation='softmax', bias_initializer='normal'))
+        model.add(Dense(units=24, input_shape=(24,), kernel_initializer='RandomNormal', activation='relu', bias_initializer='RandomNormal'))
+        model.add(Dense(units=16, kernel_initializer='RandomNormal', activation='relu', bias_initializer='RandomNormal'))
+        model.add(Dense(units=4, kernel_initializer='RandomNormal', activation='softmax', bias_initializer='RandomNormal'))
         brains.append(model)
 
     return brains
@@ -73,30 +73,34 @@ def get_next_gen(gen_score): #gen_score: [brain, score]
         next_gen.append(gen_score[i][0])
         
     #crossover no1 no2
-    son = crossover(gen_score[0][0], gen_score[1][0], 50)    
+    son = crossover(gen_score[0][0], gen_score[1][0], 80)    
     next_gen += son
     
     #crossover no1 no3
-    son = crossover(gen_score[0][0], gen_score[2][0], 40)    
+    son = crossover(gen_score[0][0], gen_score[2][0], 50)    
     next_gen += son
         
     #crossover no1 no4
-    son = crossover(gen_score[0][0], gen_score[3][0], 40)    
+    son = crossover(gen_score[0][0], gen_score[3][0], 50)    
     next_gen += son
         
     #crossover no2 no3
-    son = crossover(gen_score[1][0], gen_score[2][0], 30)    
+    son = crossover(gen_score[1][0], gen_score[2][0], 40)    
     next_gen += son
     
     #crossover no2 no4
-    son = crossover(gen_score[1][0], gen_score[3][0], 20)    
+    son = crossover(gen_score[1][0], gen_score[3][0], 30)    
     next_gen += son
-        
-    for i in range(len(gen_score)):
+    
+    for i in range(len(next_gen)):
         if i > 10:
-            if random.random() < 0.2: # mutate rate = 0.3
-                mutate(next_gen[i])       
-
+            if random.random() < 0.2: # mutate rate = 0.2
+                mutate(next_gen[i])
+                
+    #random son
+    random_gen = generate(30)
+    next_gen += random_gen
+    
     return next_gen, best_score, best_model, average_score
 
     
