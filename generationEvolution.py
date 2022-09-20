@@ -13,7 +13,7 @@ class Evolution():
         self.snakeGame = SG.SnakeGame()
         self.generations = generations
         self.gen_score = []
-        self.avg = 3
+        self.avg = 2
 
     def evolve(self):
         all_best_score = []

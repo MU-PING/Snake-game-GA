@@ -12,7 +12,7 @@ class Frames():
         self.crashed = False
         self.apple = 0
         self.alive = 0
-        self.leftstep = 120
+        self.leftstep = 100
 
         # direction
         self.prev_direction = 1 
@@ -39,7 +39,7 @@ class SnakeGame():
 
     def play(self, brain):
         snake_position = [[self.start, self.start], [self.start-1, self.start], [self.start-2, self.start], [self.start-3, self.start]]
-        rock_position = [[(5, 5), (10, 10)], [(28, 18), (30, 25)], [(8, 30), (15, 32)]]
+        rock_position = [[(8, 8), (10, 10)], [(30, 19), (31, 25)], [(8, 32), (14, 33)]]
         frames = Frames(snake_position, rock_position, self.display_size)
         
         # init apple
