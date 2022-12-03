@@ -246,7 +246,6 @@ class SnakeGame():
                 break
 
             elif something == 2:
-                print(123)
                 check_apple = True
                 feedback_apple[4] = step/max_step
                 break
