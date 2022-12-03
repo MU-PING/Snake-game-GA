@@ -4,15 +4,14 @@ import gameGUI as GG
 
 class Frames():
     
-    def __init__(self, snake_position, rock_position, size):
-        # map 0=background 1=snake 2=apple 3=rock
+    def __init__(self, snake_position, size):
+        # map 0=background 1=snake 2=apple
         self.map = np.zeros((size, size))
         self.snake_position = snake_position
-        self.rock_position = rock_position
         self.crashed = False
         self.apple = 0
         self.alive = 0
-        self.leftstep = 100
+        self.leftstep = 80
 
         # direction
         self.prev_direction = 1 
@@ -20,11 +19,6 @@ class Frames():
 
         for body in self.snake_position:
             self.map[body[0], body[1]] = 1
-
-        for rock in self.rock_position:
-            for x in range(rock[0][0], rock[1][0]+1):
-                for y in range(rock[0][1], rock[1][1]+1):
-                    self.map[x, y] = 3
                     
     def set_apple(self, apple_position):
         self.apple_position = apple_position
@@ -33,17 +27,17 @@ class Frames():
 class SnakeGame():
     
     def __init__(self):
-        self.display_size = 40
-        self.start = int(self.display_size / 2)
+        self.display_size = 31
+        self.start = int(self.display_size // 2)
         self.gameGUI = GG.GameGUI(self.display_size)
-
-    def play(self, brain):
+        
+    def play(self, brain, training):
         snake_position = [[self.start, self.start], [self.start-1, self.start], [self.start-2, self.start], [self.start-3, self.start]]
-        rock_position = [[(8, 8), (10, 10)], [(30, 19), (31, 25)], [(8, 32), (14, 33)]]
-        frames = Frames(snake_position, rock_position, self.display_size)
+        frames = Frames(snake_position, self.display_size)
+        apple_generator = self.apple_generator(frames.map)
         
         # init apple
-        apple_position = self.generate_apple(frames.map) 
+        apple_position = next(apple_generator)
         frames.set_apple(apple_position)
         
         while frames.leftstep > 0:
@@ -51,22 +45,22 @@ class SnakeGame():
             frames.alive += 1
             frames.leftstep -= 1
             
-            self.gameGUI.drawFrame(frames)
+            self.gameGUI.drawFrame(frames, training)
             
-            feedback_apple, feedback_snake, feedback_rock, feedback_wall = self.sensor(frames)
-            feedback = np.array(feedback_apple + feedback_snake + feedback_rock + feedback_wall)
+            feedback_apple, feedback_snake, feedback_wall = self.sensor(frames)
+            feedback = np.array(feedback_apple + feedback_snake + feedback_wall)
             
             # What's the difference between Model methods predict() and __call__()?(Google) 
             predict_direction = brain.predict(feedback.reshape(1, -1), verbose=0) # brain predict next direction
             direction = np.argmax(predict_direction, axis=1)[0]
             
-            self.next_frame(frames, direction)
+            self.next_frame(frames, direction, apple_generator)
 
             if frames.crashed==True: break;
 
         return frames.apple + frames.alive
 
-    def next_frame(self, frames, direction):
+    def next_frame(self, frames, direction, apple_generator):
         if direction == 0 and frames.prev_direction!= 1:
             frames.direction = 0
         elif direction == 1 and frames.prev_direction!= 0: 
@@ -90,10 +84,10 @@ class SnakeGame():
 
         # collision with apple -----------------------
         if snake_head == frames.apple_position:
-            frames.apple_position = self.generate_apple(frames.map) 
+            frames.apple_position = next(apple_generator)
             frames.map[frames.apple_position[0], frames.apple_position[1]] = 2
             frames.apple += 100
-            frames.leftstep += 120
+            frames.leftstep += 100
     
         else:
             discard = frames.snake_position.pop()
@@ -103,11 +97,6 @@ class SnakeGame():
         if snake_head in frames.snake_position[1:]:
             frames.crashed = True
             
-        # collision with rock ----------------------------
-        for rock in frames.rock_position:
-            if rock[0][0] <= snake_head[0] and snake_head[0] <= rock[1][0] and rock[0][1] <= snake_head[1] and snake_head[1] <= rock[1][1]:
-                frames.crashed = True
-            
         # collision with boundaries ----------------------------
         if snake_head[0] >= self.display_size or snake_head[0] < 0 or snake_head[1] >= self.display_size or snake_head[1] < 0:
             frames.crashed = True
@@ -116,21 +105,22 @@ class SnakeGame():
             frames.snake_position.insert(0, snake_head)
             frames.map[snake_head[0], snake_head[1]] = 1
 
-    def generate_apple(self, frames_map):
-        x = random.randrange(0, self.display_size)
-        y = random.randrange(0, self.display_size)
-        
-        while frames_map[x, y] != 0:
+    def apple_generator(self, frames_map):
+
+        while 1:
             x = random.randrange(0, self.display_size)
             y = random.randrange(0, self.display_size)
-        
-        return [x, y]
+            
+            while frames_map[x, y] != 0:
+                x = random.randrange(0, self.display_size)
+                y = random.randrange(0, self.display_size)
+            
+            yield  [x, y]
     
     def sensor(self, frames):
         # 0 means no (top, topleft, topright, left, right, bottom, bottomleft, bottomright)
         feedback_apple = [-1, -1, -1, -1, -1, -1, -1, -1]
         feedback_snake = [-1, -1, -1, -1, -1, -1, -1, -1]
-        feedback_rock = [-1, -1, -1, -1, -1, -1, -1, -1]
         feedback_wall = [-1, -1, -1, -1, -1, -1, -1, -1]
 
         framesMap = frames.map
@@ -139,6 +129,8 @@ class SnakeGame():
         max_step = self.display_size
 
         # top
+        drawList = []
+        check_apple = False
         for step in range(1, self.display_size):
             target = snake_head_h - step 
 
@@ -152,17 +144,18 @@ class SnakeGame():
                 break
 
             elif something == 2:
+                check_apple = True
                 feedback_apple[0] = step/max_step
                 break
             
-            elif something == 3:
-                feedback_rock[0] = step/max_step
-                break
-            
             else:
-                self.gameGUI.drawSensor(snake_head_w, target)
+                drawList.append((snake_head_w, target))
+                
+        self.gameGUI.drawSensor(drawList, check_apple)
             
         # topleft
+        drawList = []
+        check_apple = False
         for step in range(1, self.display_size):
             target_w = snake_head_w - step 
             target_h = snake_head_h - step 
@@ -177,16 +170,18 @@ class SnakeGame():
                 break
 
             elif something == 2:
+                check_apple = True
                 feedback_apple[1] = step/max_step
-                
-            elif something == 3:
-                feedback_rock[1] = step/max_step
                 break
             
             else:
-                self.gameGUI.drawSensor(target_w, target_h)
+                drawList.append((target_w, target_h))
                 
+        self.gameGUI.drawSensor(drawList, check_apple)
+        
         # topright
+        drawList = []
+        check_apple = False
         for step in range(1, self.display_size):
             target_w = snake_head_w + step 
             target_h = snake_head_h - step 
@@ -201,17 +196,18 @@ class SnakeGame():
                 break
 
             elif something == 2:
+                check_apple = True
                 feedback_apple[2] = step/max_step
                 break
             
-            elif something == 3:
-                feedback_rock[2] = step/max_step
-                break
-            
             else:
-                self.gameGUI.drawSensor(target_w, target_h)
+                drawList.append((target_w, target_h))
+                
+        self.gameGUI.drawSensor(drawList, check_apple)
 
         # left
+        drawList = []
+        check_apple = False
         for step in range(1, self.display_size):
             target = snake_head_w - step 
 
@@ -225,17 +221,18 @@ class SnakeGame():
                 break
 
             elif something == 2:
+                check_apple = True
                 feedback_apple[3] = step/max_step
                 break
             
-            elif something == 3:
-                feedback_rock[3] = step/max_step
-                break
-            
             else:
-                self.gameGUI.drawSensor(target, snake_head_h)
+                drawList.append((target, snake_head_h))
+                
+        self.gameGUI.drawSensor(drawList, check_apple)
 
         # right
+        drawList = []
+        check_apple = False
         for step in range(1, self.display_size):
             target = snake_head_w + step 
 
@@ -249,17 +246,19 @@ class SnakeGame():
                 break
 
             elif something == 2:
+                print(123)
+                check_apple = True
                 feedback_apple[4] = step/max_step
                 break
             
-            elif something == 3:
-                feedback_rock[4] = step/max_step
-                break
-            
             else:
-                self.gameGUI.drawSensor(target, snake_head_h)
+                drawList.append((target, snake_head_h))
+                
+        self.gameGUI.drawSensor(drawList, check_apple)
 
         # bottom
+        drawList = []
+        check_apple = False
         for step in range(1, self.display_size):
             target = snake_head_h + step 
 
@@ -273,18 +272,19 @@ class SnakeGame():
                 break
 
             elif something == 2:
+                check_apple = True
                 feedback_apple[5] = step/max_step
                 break
             
-            elif something == 3:
-                feedback_rock[5] = step/max_step
-                break
-            
             else:
-                self.gameGUI.drawSensor(snake_head_w, target)
+                drawList.append((snake_head_w, target))
+                
+        self.gameGUI.drawSensor(drawList, check_apple)
                 
                 
         # bottomleft
+        drawList = []
+        check_apple = False
         for step in range(1, self.display_size):
             target_w = snake_head_w - step 
             target_h = snake_head_h + step 
@@ -299,17 +299,18 @@ class SnakeGame():
                 break
 
             elif something == 2:
+                check_apple = True
                 feedback_apple[6] = step/max_step
                 break
             
-            elif something == 3:
-                feedback_rock[6] = step/max_step
-                break
-            
             else:
-                self.gameGUI.drawSensor(target_w, target_h)
+                drawList.append((target_w, target_h))
+                
+        self.gameGUI.drawSensor(drawList, check_apple)
                 
         # bottomright
+        drawList = []
+        check_apple = False
         for step in range(1, self.display_size):
             target_w = snake_head_w + step 
             target_h = snake_head_h + step 
@@ -324,16 +325,15 @@ class SnakeGame():
                 break
 
             elif something == 2:
+                check_apple = True
                 feedback_apple[7] = step/max_step
                 break
             
-            elif something == 3:
-                feedback_rock[7] = step/max_step
-                break
-            
             else:
-                self.gameGUI.drawSensor(target_w, target_h)
+                drawList.append((target_w, target_h))
+                
+        self.gameGUI.drawSensor(drawList, check_apple)
                 
         self.gameGUI.update()
 
-        return feedback_apple, feedback_snake, feedback_rock, feedback_wall
+        return feedback_apple, feedback_snake, feedback_wall

@@ -13,7 +13,7 @@ class Evolution():
         self.snakeGame = SG.SnakeGame()
         self.generations = generations
         self.gen_score = []
-        self.avg = 2
+        self.avg = 10
 
     def evolve(self):
         all_best_score = []
@@ -26,7 +26,7 @@ class Evolution():
                 
                 score = 0
                 for _ in range(self.avg): # play four times each brain
-                    score += self.snakeGame.play(self.brainList[index])
+                    score += self.snakeGame.play(self.brainList[index], training=True)
                 score /= self.avg # average
 
                 self.gen_score.append([self.brainList[index], score])
@@ -43,13 +43,13 @@ class Evolution():
             self.brainList = next_gen
             self.gen_score = [] 
         
+            plt.figure(figsize=(8,5))
+            plt.title("Score evolving")
+            plt.xlabel("Generation")
+            plt.ylabel("Score")
+            plt.plot(all_best_score, label="Best")
+            plt.plot(all_average_score, label="Average")
+            plt.legend()
+            plt.show()
         
-        plt.figure(figsize=(8,5))
-        plt.title("Score evolving")
-        plt.xlabel("Generation")
-        plt.ylabel("Score")
-        plt.legend()
-        plt.plot(all_best_score, label="Best")
-        plt.plot(all_average_score, label="Average")
-        plt.show()
         

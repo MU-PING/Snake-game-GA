@@ -22,10 +22,10 @@ class GameGUI():
         self.apple_color = (255, 0, 0)
         self.snake_head_color = (0, 139, 0)
         self.snake_color = (60, 179, 113)
-        self.rock_color =(105, 105, 105)
-        self.sensor_color = (135, 206, 255)
+        self.sensor_color = (173, 173, 173)
+        self.sensor_apple_color = (102, 102, 102)
 
-    def drawFrame(self, frames):
+    def drawFrame(self, frames, training):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 frames.crashed = True
@@ -41,14 +41,13 @@ class GameGUI():
         # draw apple
         pygame.draw.rect(self.display, self.apple_color, pygame.Rect(frames.apple_position[0]*10+1, frames.apple_position[1]*10+1, 8, 8))
         
-        # draw rock
-        for rock in frames.rock_position:
-            for x in range(rock[0][0], rock[1][0]+1):
-                for y in range(rock[0][1], rock[1][1]+1):
-                    pygame.draw.rect(self.display, self.rock_color, pygame.Rect(x*10+1, y*10+1, 8, 8))
-        
         # draw caption
-        pygame.display.set_caption('Score: '+ str(frames.apple + frames.alive))
+        if training:
+            train_or_test = "Training"
+        else:
+            train_or_test = "Testing Best"
+            
+        pygame.display.set_caption(train_or_test +' Score: '+ str(frames.apple + frames.alive))
         
     def drawGrid(self):
         blockSize = 10
@@ -56,8 +55,15 @@ class GameGUI():
             for y in range(0, self.size, blockSize):
                 pygame.draw.rect(self.display, (200, 200, 200), pygame.Rect(x, y, blockSize, blockSize), 1)
                 
-    def drawSensor(self, x , y):
-        pygame.draw.rect(self.display, self.sensor_color, pygame.Rect(x*10+2, y*10+2, 6, 6))
+    def drawSensor(self, drawList, check_apple):
+        
+        if check_apple:
+            color = self.sensor_apple_color
+        else:
+            color = self.sensor_color
+            
+        for draw in drawList:
+            pygame.draw.rect(self.display, color, pygame.Rect(draw[0]*10+2, draw[1]*10+2, 6, 6))
         
     def update(self):
         pygame.display.update()

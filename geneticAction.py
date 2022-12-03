@@ -18,7 +18,7 @@ def generate(population, disable=True):
     brains = []
     for _ in tqdm(range(population), disable=disable):
         model = Sequential()
-        model.add(Dense(units=32, input_shape=(32,), kernel_initializer='RandomNormal', activation='relu', bias_initializer='RandomNormal'))
+        model.add(Dense(units=16, input_shape=(24,), kernel_initializer='RandomNormal', activation='relu', bias_initializer='RandomNormal'))
         model.add(Dense(units=16, kernel_initializer='RandomNormal', activation='relu', bias_initializer='RandomNormal'))
         model.add(Dense(units=4, kernel_initializer='RandomNormal', activation='softmax', bias_initializer='RandomNormal'))
         brains.append(model)
@@ -43,7 +43,7 @@ def crossover(mom, dad, son_population):
         son[count].set_weights(son_weight)
     return son
 
-def mutate(model, mutate_rate = 0.15):
+def mutate(model, mutate_rate = 0.1):
     weight = model.get_weights()
     
     for i in range(len(weight)):
@@ -51,10 +51,10 @@ def mutate(model, mutate_rate = 0.15):
             if weight[i][j].ndim > 0:
                 for k in range(len(weight[i][j])):
                     if random.random() < mutate_rate:                        
-                        weight[i][j, k] += random.gauss(0, 0.5)
+                        weight[i][j, k] += random.gauss(0, 0.4)
             else:
                 if random.random() < mutate_rate:                        
-                        weight[i][j] += random.gauss(0, 0.5)
+                        weight[i][j] += random.gauss(0, 0.4)
     
     # a is ndarray, a[i][j] is inefficient than a[i, j] because of new temporary array (google "numpy view vs copy")
     # a = a*2 is inefficient than a *= 2 because of new temporary array or variable
@@ -94,7 +94,7 @@ def get_next_gen(gen_score): #gen_score: [brain, score]
     
     for i in range(len(next_gen)):
         if i > 10:
-            if random.random() < 0.2: # mutate rate = 0.2
+            if random.random() < 0.3: # mutate rate = 0.2
                 mutate(next_gen[i])
                 
     #random son
