@@ -11,7 +11,7 @@ class Frames():
         self.crashed = False
         self.apple = 0
         self.alive = 0
-        self.leftstep = 80
+        self.leftstep = 100
 
         # direction
         self.prev_direction = 1 

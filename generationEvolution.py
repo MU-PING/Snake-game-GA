@@ -43,12 +43,12 @@ class Evolution():
             self.brainList = next_gen
             self.gen_score = [] 
         
-            plt.figure(figsize=(8,5))
-            plt.title("Score evolving")
+            plt.figure(figsize=(8, 5))
+            plt.title("Score Evolving")
             plt.xlabel("Generation")
             plt.ylabel("Score")
-            plt.plot(all_best_score, label="Best")
-            plt.plot(all_average_score, label="Average")
+            plt.plot(all_best_score, label="Best Score")
+            plt.plot(all_average_score, label="Average Score")
             plt.legend()
             plt.show()
         
