@@ -1,6 +1,4 @@
 import pygame
-import random
-import sys
 
 class GameGUI():
     
@@ -48,22 +46,12 @@ class GameGUI():
             train_or_test = "Testing Best"
             
         pygame.display.set_caption(train_or_test +' Score: '+ str(frames.apple + frames.alive))
+        pygame.display.update()
         
     def drawGrid(self):
         blockSize = 10
         for x in range(0, self.size, blockSize):
             for y in range(0, self.size, blockSize):
                 pygame.draw.rect(self.display, (200, 200, 200), pygame.Rect(x, y, blockSize, blockSize), 1)
-                
-    def drawSensor(self, drawList, check_apple):
         
-        if check_apple:
-            color = self.sensor_apple_color
-        else:
-            color = self.sensor_color
-            
-        for draw in drawList:
-            pygame.draw.rect(self.display, color, pygame.Rect(draw[0]*10+2, draw[1]*10+2, 6, 6))
         
-    def update(self):
-        pygame.display.update()

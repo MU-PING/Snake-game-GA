@@ -1,8 +1,7 @@
-import sys
-from generationEvolution import *
+from build_evolution import Evolution
 
 if __name__ == '__main__':
-    brainNum = 2000
+    brainNum = 400
     generations = 200
 
     print("Initializing generation...")
