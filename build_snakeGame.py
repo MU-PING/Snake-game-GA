@@ -128,7 +128,7 @@ class SnakeGame():
         snake_head_h = frames.snake_position[0][1]
 
         # top
-        for step in range(1, self.display_size):
+        for step in range(1, self.display_size+1):
             target = snake_head_h - step 
 
             if(target < 0): 
@@ -143,7 +143,7 @@ class SnakeGame():
                 feedback_apple[0] = 1
             
         # topleft
-        for step in range(1, self.display_size):
+        for step in range(1, self.display_size+1):
             target_w = snake_head_w - step 
             target_h = snake_head_h - step 
 
@@ -160,7 +160,7 @@ class SnakeGame():
         
         
         # topright
-        for step in range(1, self.display_size):
+        for step in range(1, self.display_size+1):
             target_w = snake_head_w + step 
             target_h = snake_head_h - step 
 
@@ -176,11 +176,13 @@ class SnakeGame():
                 feedback_apple[2] = 1
 
         # left
-        for step in range(1, self.display_size):
+        for step in range(1, self.display_size+1):
             target = snake_head_w - step 
 
             if(target < 0): 
+                print(step)
                 feedback_wall[3] = 1/step
+                print(feedback_wall[3])
                 break
 
             something = framesMap[target, snake_head_h]
@@ -191,7 +193,7 @@ class SnakeGame():
                 feedback_apple[3] = 1
 
         # right
-        for step in range(1, self.display_size):
+        for step in range(1, self.display_size+1):
             target = snake_head_w + step 
 
             if(target == self.display_size): 
@@ -206,7 +208,7 @@ class SnakeGame():
                 feedback_apple[4] = 1
 
         # bottom
-        for step in range(1, self.display_size):
+        for step in range(1, self.display_size+1):
             target = snake_head_h + step 
 
             if(target == self.display_size): 
@@ -221,7 +223,7 @@ class SnakeGame():
                 feedback_apple[5] = 1
                       
         # bottomleft
-        for step in range(1, self.display_size):
+        for step in range(1, self.display_size+1):
             target_w = snake_head_w - step 
             target_h = snake_head_h + step 
 
@@ -237,7 +239,7 @@ class SnakeGame():
                 feedback_apple[6] = 1
                 
         # bottomright
-        for step in range(1, self.display_size):
+        for step in range(1, self.display_size+1):
             target_w = snake_head_w + step 
             target_h = snake_head_h + step 
 
@@ -251,5 +253,9 @@ class SnakeGame():
 
             elif something == 2 and feedback_apple[7] == 0:
                 feedback_apple[7] = 1
-        
+                
+        print(feedback_apple)
+        print(feedback_snake)
+        print(feedback_wall)
+        print()
         return feedback_apple, feedback_snake, feedback_wall
