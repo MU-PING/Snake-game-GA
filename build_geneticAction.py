@@ -18,7 +18,7 @@ def generate(population, disable=True):
     brains = []
     for _ in tqdm(range(population), disable=disable):
         model = Sequential()
-        model.add(Dense(units=24, input_shape=(24,), kernel_initializer='RandomNormal', activation='relu', bias_initializer='RandomNormal'))
+        model.add(Dense(units=16, input_shape=(24,), kernel_initializer='RandomNormal', activation='relu', bias_initializer='RandomNormal'))
         model.add(Dense(units=16, kernel_initializer='RandomNormal', activation='relu', bias_initializer='RandomNormal'))
         model.add(Dense(units=4, kernel_initializer='RandomNormal', activation='softmax', bias_initializer='RandomNormal'))
         brains.append(model)
@@ -51,10 +51,10 @@ def mutate(model, mutate_rate=0.1):
             if weight[i][j].ndim > 0:
                 for k in range(len(weight[i][j])):
                     if random.random() < mutate_rate:                        
-                        weight[i][j, k] += random.gauss(0, 0.4)
+                        weight[i][j, k] += random.gauss(0, 0.3)
             else:
                 if random.random() < mutate_rate:                        
-                        weight[i][j] += random.gauss(0, 0.4)
+                        weight[i][j] += random.gauss(0, 0.3)
     
     # a is ndarray, a[i][j] is inefficient than a[i, j] because of new temporary array (google "numpy view vs copy")
     # a = a*2 is inefficient than a *= 2 because of new temporary array or variable

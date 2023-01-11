@@ -180,9 +180,7 @@ class SnakeGame():
             target = snake_head_w - step 
 
             if(target < 0): 
-                print(step)
                 feedback_wall[3] = 1/step
-                print(feedback_wall[3])
                 break
 
             something = framesMap[target, snake_head_h]
@@ -254,8 +252,4 @@ class SnakeGame():
             elif something == 2 and feedback_apple[7] == 0:
                 feedback_apple[7] = 1
                 
-        print(feedback_apple)
-        print(feedback_snake)
-        print(feedback_wall)
-        print()
         return feedback_apple, feedback_snake, feedback_wall
