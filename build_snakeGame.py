@@ -26,11 +26,11 @@ class Frames():
         
 class SnakeGame():
     
-    def __init__(self):
-        self.display_size = 31
+    def __init__(self, gameGUI, display_size):
+        self.display_size = display_size
         self.start = int(self.display_size // 2)
-        self.gameGUI = GG.GameGUI(self.display_size)
-        
+        self.gameGUI = gameGUI
+    
     def play(self, brain, training):
         snake_position = [[self.start, self.start], [self.start-1, self.start], [self.start-2, self.start]]
         frames = Frames(snake_position, self.display_size)

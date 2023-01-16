@@ -96,7 +96,7 @@ def get_next_gen(gen_score): #gen_score: [brain, score]
         if random.random() < 0.2: # mutate rate = 0.2
             mutate(next_gen[i])
     
-    return next_gen, best_score, best_model, average_score
+    return next_gen, best_score, average_score, best_model
 
     
     

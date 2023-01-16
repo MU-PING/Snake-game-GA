@@ -54,4 +54,5 @@ class GameGUI():
             for y in range(0, self.size, blockSize):
                 pygame.draw.rect(self.display, (200, 200, 200), pygame.Rect(x, y, blockSize, blockSize), 1)
         
-        
+    def quitGUI(self):
+        pygame.quit()    
