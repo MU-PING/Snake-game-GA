@@ -32,7 +32,7 @@ class SnakeGame():
         self.gameGUI = GG.GameGUI(self.display_size)
         
     def play(self, brain, training):
-        snake_position = [[self.start, self.start], [self.start-1, self.start], [self.start-2, self.start], [self.start-3, self.start]]
+        snake_position = [[self.start, self.start], [self.start-1, self.start], [self.start-2, self.start]]
         frames = Frames(snake_position, self.display_size)
         apple_generator = self.apple_generator(frames.map)
         

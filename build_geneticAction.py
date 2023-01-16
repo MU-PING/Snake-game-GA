@@ -51,10 +51,10 @@ def mutate(model, mutate_rate=0.1):
             if weight[i][j].ndim > 0:
                 for k in range(len(weight[i][j])):
                     if random.random() < mutate_rate:                        
-                        weight[i][j, k] += random.gauss(0, 0.3)
+                        weight[i][j, k] += random.gauss(0, 0.2)
             else:
                 if random.random() < mutate_rate:                        
-                        weight[i][j] += random.gauss(0, 0.3)
+                        weight[i][j] += random.gauss(0, 0.2)
     
     # a is ndarray, a[i][j] is inefficient than a[i, j] because of new temporary array (google "numpy view vs copy")
     # a = a*2 is inefficient than a *= 2 because of new temporary array or variable
@@ -69,33 +69,32 @@ def get_next_gen(gen_score): #gen_score: [brain, score]
     average_score = np.mean([score[1] for score in gen_score])
     
     next_gen = []
-    for i in range(40):
+    for i in range(5):
         next_gen.append(gen_score[i][0])
         
     #crossover no1 no2
-    son = crossover(gen_score[0][0], gen_score[1][0], 120)    
+    son = crossover(gen_score[0][0], gen_score[1][0], 15)    
     next_gen += son
     
     #crossover no1 no3
-    son = crossover(gen_score[0][0], gen_score[2][0], 80)    
+    son = crossover(gen_score[0][0], gen_score[2][0], 10)    
     next_gen += son
         
     #crossover no1 no4
-    son = crossover(gen_score[0][0], gen_score[3][0], 80)    
+    son = crossover(gen_score[0][0], gen_score[3][0], 10)    
     next_gen += son
         
     #crossover no2 no3
-    son = crossover(gen_score[1][0], gen_score[2][0], 40)    
+    son = crossover(gen_score[1][0], gen_score[2][0], 5)    
     next_gen += son
     
     #crossover no2 no4
-    son = crossover(gen_score[1][0], gen_score[3][0], 40)    
+    son = crossover(gen_score[1][0], gen_score[3][0], 5)    
     next_gen += son
     
     for i in range(len(next_gen)):
-        if i > 50:
-            if random.random() < 0.2: # mutate rate = 0.2
-                mutate(next_gen[i])
+        if random.random() < 0.2: # mutate rate = 0.2
+            mutate(next_gen[i])
     
     return next_gen, best_score, best_model, average_score
 
