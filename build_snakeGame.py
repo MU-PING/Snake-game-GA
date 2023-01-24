@@ -1,6 +1,6 @@
+import math
 import random
 import numpy as np
-import build_gameGUI as GG
 
 class Frames():
     
@@ -58,8 +58,17 @@ class SnakeGame():
 
             if frames.crashed==True: break;
 
-        return frames.apple + frames.alive
-
+        return  self.calc_fitness(frames.apple, frames.alive), frames.apple + frames.alive
+    
+    def calc_fitness(self, apple, alive):
+        if apple < 10:
+            fitness = math.floor(alive*alive) * math.pow(2, apple)
+            
+        else:
+            fitness = math.floor(alive*alive) * math.pow(2, 10) * (apple-9)
+            
+        return fitness
+    
     def next_frame(self, frames, direction, apple_generator):
         if direction == 0 and frames.prev_direction!= 1:
             frames.direction = 0
@@ -251,5 +260,5 @@ class SnakeGame():
 
             elif something == 2 and feedback_apple[7] == 0:
                 feedback_apple[7] = 1
-                
+        
         return feedback_apple, feedback_snake, feedback_wall

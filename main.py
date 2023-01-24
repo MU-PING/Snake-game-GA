@@ -7,17 +7,16 @@ from tqdm import tqdm
 if __name__ == '__main__':
     print("Initializing generation...")
     
-    display_size = 31
-    brainNum = 50
-    generations = 200
+    display_size = 21
+    brainNum = 2000
+    generations = 100
     
     brainList = GA.generate(brainNum, False)
     snakeGUI = GameGUI(display_size)
     snakeGame = SnakeGame(snakeGUI, display_size)
     
     all_best_score = []
-    all_average_score = []
-    avg = 10
+    all_best_fitness = []
 
     for gen in tqdm(range(1, generations+1), disable=True):
         print("\nGenerations: " + str(gen))
@@ -25,33 +24,22 @@ if __name__ == '__main__':
         gen_score = []
         for index in tqdm(range(len(brainList))):
             
-            score = 0
-            for _ in range(avg): # play four times each brain
-                score += snakeGame.play(brainList[index], training=True)
-            score /= avg # average
+            fitness, score = snakeGame.play(brainList[index], training=True)
+            gen_score.append([brainList[index], fitness, score])
 
-            gen_score.append([brainList[index], score])
-
-        next_gen, best_score, average_score, best_model = GA.get_next_gen(gen_score)
-        
-        print("Best Score: " + str(best_score))
-        all_best_score.append(best_score)
-        
-        print("Avgerage Score: " + str(average_score))
-        all_average_score.append(average_score)
-        
+        next_gen, best_fittness_score, best_model = GA.get_next_gen(gen_score)
+        all_best_score.append(best_fittness_score)
         best_model.save_weights("bestModel.h5")
 
         # reset next generation
         brainList = next_gen
     
         # plot Score Evolving
-        plt.figure(figsize=(8, 5))
+        plt.figure(figsize=(6, 5))
         plt.title("Score Evolving")
         plt.xlabel("Generation")
         plt.ylabel("Score")
         plt.plot(all_best_score, label="Best Score")
-        plt.plot(all_average_score, label="Average Score")
         plt.legend()
         plt.show()
         
