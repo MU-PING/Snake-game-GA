@@ -2,9 +2,10 @@ import pygame
 
 class GameGUI():
     
-    def __init__(self, size):
+    def __init__(self, train_or_test, size):
         #initialize pygame modules   
         pygame.init() 
+        pygame.display.set_caption(train_or_test + 'SnakeAI Game')
         
         # initialize Clock
         self.clock= pygame.time.Clock() 
@@ -12,9 +13,18 @@ class GameGUI():
         # display game window
         self.unit = 20
         self.size = size * self.unit
+        
+        # display info window
+        self.height = 4 * self.unit
 
         # create the display surface object of specific dimension.
-        self.display = pygame.display.set_mode((self.size, self.size))
+        self.display = pygame.display.set_mode((self.size, self.size+self.height))
+        
+        # font
+        self.infoText = pygame.font.Font('font.ttf', 14)
+        self.Gen_TextSurf = self.infoText.render("Generation: Undefined", True, (0, 0, 0))
+        self.Snake_TextSurf = self.infoText.render("Snake NO: Undefined", True, (0, 0, 0))
+        self.Score_TextSurf = self.infoText.render("Score: Undefined", True, (0, 0, 0))
         
         # color
         self.ground_color = (193, 255, 193)
@@ -24,35 +34,51 @@ class GameGUI():
         self.sensor_color = (173, 173, 173)
         self.sensor_apple_color = (102, 102, 102)
 
-    def drawFrame(self, frames, training):
+    def drawFrame(self, frames):
+        
+        # check event
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 frames.crashed = True
 
-        pygame.draw.rect(self.display, self.ground_color, pygame.Rect(0, 0, self.size, self.size))
+        self.drawBackground()
         self.drawGrid()
+        self.drawInfo(frames.score)
+        self.drawSnake(frames.snake_position)
+        self.drawApple(frames.apple_position)
         
-        # draw snake
-        pygame.draw.rect(self.display, self.snake_head_color, pygame.Rect(frames.snake_position[0][0]*self.unit+1, frames.snake_position[0][1]*self.unit+1, 18, 18))
-        for position in frames.snake_position[1:]:
-            pygame.draw.rect(self.display, self.snake_color, pygame.Rect(position[0]*self.unit+1, position[1]*self.unit+1, 18, 18))
-        
-        # draw apple
-        pygame.draw.rect(self.display, self.apple_color, pygame.Rect(frames.apple_position[0]*self.unit+1, frames.apple_position[1]*self.unit+1, 18, 18))
-        
-        # draw caption
-        if training:
-            train_or_test = "Training"
-        else:
-            train_or_test = "Testing Best"
-            
-        pygame.display.set_caption(train_or_test +' Apple: '+ str(frames.apple))
         pygame.display.update()
+        
+    def drawBackground(self):
+        pygame.draw.rect(self.display, self.ground_color, pygame.Rect(0, 0, self.size, self.size))
         
     def drawGrid(self):
         for x in range(0, self.size, self.unit):
             for y in range(0, self.size, self.unit):
                 pygame.draw.rect(self.display, (200, 200, 200), pygame.Rect(x, y, self.unit, self.unit), 1)
+    
+    def drawInfo(self, score):
+        pygame.draw.rect(self.display, (255, 229, 180), pygame.Rect(0, self.size, self.size, self.height))
+        self.Score_TextSurf = self.infoText.render("Score: "+str(score), True, (0, 0, 0))
+        
+        # render
+        self.display.blit(self.Gen_TextSurf, (10, 8+self.size))
+        self.display.blit(self.Snake_TextSurf, (10, 33+self.size))
+        self.display.blit(self.Score_TextSurf, (10, 58+self.size))
+    
+    def drawSnake(self, snake_position):
+        pygame.draw.rect(self.display, self.snake_head_color, pygame.Rect(snake_position[0][0]*self.unit+2, snake_position[0][1]*self.unit+2, 16, 16))
+        for position in snake_position[1:]:
+            pygame.draw.rect(self.display, self.snake_color, pygame.Rect(position[0]*self.unit+2, position[1]*self.unit+2, 16, 16))
+    
+    def drawApple(self, apple_position):
+        pygame.draw.rect(self.display, self.apple_color, pygame.Rect(apple_position[0]*self.unit+2, apple_position[1]*self.unit+2, 16, 16))
+    
+    def setGen(self, gen):
+        self.Gen_TextSurf = self.infoText.render("Generation: "+str(gen), True, (0, 0, 0))
+        
+    def setSnakeNO(self, snakeNO):
+        self.Snake_TextSurf = self.infoText.render("Snake NO: "+str(snakeNO), True, (0, 0, 0))    
         
     def quitGUI(self):
         pygame.quit()    

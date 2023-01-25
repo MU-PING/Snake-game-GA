@@ -9,6 +9,7 @@ class Frames():
         self.map = np.zeros((size, size))
         self.snake_position = snake_position
         self.crashed = False
+        self.score = 0
         self.apple = 0
         self.alive = 0
         self.leftstep = 100
@@ -31,7 +32,7 @@ class SnakeGame():
         self.start = int(self.display_size // 2)
         self.gameGUI = gameGUI
     
-    def play(self, brain, training):
+    def play(self, snake):
         snake_position = [[self.start, self.start], [self.start-1, self.start], [self.start-2, self.start]]
         frames = Frames(snake_position, self.display_size)
         apple_generator = self.apple_generator(frames.map)
@@ -43,22 +44,23 @@ class SnakeGame():
         while frames.leftstep > 0:
 
             frames.alive += 1
+            frames.score += 1
             frames.leftstep -= 1
             
-            self.gameGUI.drawFrame(frames, training)
+            self.gameGUI.drawFrame(frames)
             
             feedback_apple, feedback_snake, feedback_wall = self.sensor(frames)
             feedback = np.array(feedback_apple + feedback_snake + feedback_wall)
             
             # What's the difference between Model methods predict() and __call__()?(Google) 
-            predict_direction = brain.predict(feedback.reshape(1, -1), verbose=0) # brain predict next direction
+            predict_direction = snake.predict(feedback.reshape(1, -1), verbose=0) # brain predict next direction
             direction = np.argmax(predict_direction, axis=1)[0]
             
             self.next_frame(frames, direction, apple_generator)
 
             if frames.crashed==True: break;
 
-        return  self.calc_fitness(frames.apple, frames.alive), frames.apple + frames.alive
+        return  self.calc_fitness(frames.apple, frames.alive), frames.score
     
     def calc_fitness(self, apple, alive):
         if apple < 10:
@@ -96,6 +98,7 @@ class SnakeGame():
             frames.apple_position = next(apple_generator)
             frames.map[frames.apple_position[0], frames.apple_position[1]] = 2
             frames.apple += 100
+            frames.score += 100
             frames.leftstep += 100
     
         else:

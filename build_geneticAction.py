@@ -9,7 +9,6 @@ Must be in the same file as tensorflow and before tensorflow is imported
 """
 
 import random
-import numpy as np
 from tqdm import tqdm
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense
@@ -100,10 +99,10 @@ def get_next_gen(gen_score): #gen_score: [brain, score]
     son = crossover(gen_score[1][0], gen_score[3][0], 300)    
     next_gen += son
     
-    for i in range(len(next_gen)):
-        if i > 5:
-            if random.random() < 0.2: # mutate rate = 0.2
-                mutate(next_gen[i])
+    noMutationIndex = 10
+    for i in range(noMutationIndex, len(next_gen)):
+        if random.random() < 0.2: # mutate rate = 0.2
+            mutate(next_gen[i])
     
     return next_gen, best_fittness_score, best_model
 
