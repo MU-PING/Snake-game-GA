@@ -1,4 +1,4 @@
-import pygame
+import pygame, sys
 
 class GameGUI():
     
@@ -79,6 +79,19 @@ class GameGUI():
         
     def setSnakeNO(self, snakeNO):
         self.Snake_TextSurf = self.infoText.render("Snake NO: "+str(snakeNO), True, (0, 0, 0))    
-        
+    
+    def loopGUI(self, score):
+        while 1 :
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()                    
+            self.drawBackground()
+            self.drawGrid()
+            self.drawInfo(score)
+                    
     def quitGUI(self):
-        pygame.quit()    
+        pygame.quit()  
+    
+
+        

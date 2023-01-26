@@ -1,23 +1,17 @@
+import tensorflow as tf
 import build_geneticAction as GA
 import matplotlib.pyplot as plt
 from build_snakeGame import SnakeGame
 from build_gameGUI import GameGUI
 from tqdm import tqdm
 
-if __name__ == '__main__':
-    training = True    
-    display_size = 17
-    snakeNum = 2000
-    generations = 100
-    
+def do_training():
     print("Initializing generation...")
     snakeList = GA.generate(snakeNum, False)
-    snakeGUI = GameGUI("Train ", display_size)
+    snakeGUI = GameGUI("Training ", display_size)
     snakeGame = SnakeGame(snakeGUI, display_size)
     
     all_best_score = []
-    all_best_fitness = []
-    
     for gen in tqdm(range(generations), disable=True):
         print("\nGenerations: " + str(gen))
         
@@ -32,8 +26,8 @@ if __name__ == '__main__':
 
         next_gen, best_fittness_score, best_model = GA.get_next_gen(gen_score)
         all_best_score.append(best_fittness_score)
-        best_model.save_weights("bestModel.h5")
-
+        tf.keras.models.save_model(best_model, "bestModel.h5")
+        
         # reset next generation
         snakeList = next_gen
     
@@ -45,5 +39,27 @@ if __name__ == '__main__':
         plt.plot(all_best_score, label="Best Score")
         plt.legend()
         plt.show()
-        
+    
     snakeGUI.quitGUI()
+    
+def do_testing():
+    print("Loading Best Model...")
+    bestModel = tf.keras.models.load_model("bestModel.h5", compile=False)
+    snakeGUI = GameGUI("Testing ", display_size)
+    snakeGame = SnakeGame(snakeGUI, display_size)
+    
+    snakeGUI.setSnakeNO("BestSnake")
+    fitness, score = snakeGame.play(bestModel)
+    snakeGUI.loopGUI(score)
+    
+if __name__ == '__main__':
+    training = True   
+    display_size = 17
+    snakeNum = 2000
+    generations = 100
+    
+    if training:
+        do_training()
+    else:
+        do_testing()
+        

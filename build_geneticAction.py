@@ -80,7 +80,7 @@ def get_next_gen(gen_score): #gen_score: [brain, score]
     best_fittness_score = gen_score[0][2]
     
     next_gen = []
-    for i in range(200):
+    for i in range(10):
         next_gen.append(gen_score[i][0])
         
     #crossover no1 no2
@@ -99,7 +99,7 @@ def get_next_gen(gen_score): #gen_score: [brain, score]
     son = crossover(gen_score[1][0], gen_score[3][0], 300)    
     next_gen += son
     
-    noMutationIndex = 10
+    noMutationIndex = 3
     for i in range(noMutationIndex, len(next_gen)):
         if random.random() < 0.2: # mutate rate = 0.2
             mutate(next_gen[i])
