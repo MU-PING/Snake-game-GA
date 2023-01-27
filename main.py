@@ -7,11 +7,13 @@ from tqdm import tqdm
 
 def do_training():
     print("Initializing generation...")
-    snakeList = GA.generate(snakeNum, False)
+    snakeList = [GA.generateModel() for _ in tqdm(range(snakeNum))]
     snakeGUI = GameGUI("Training ", display_size)
     snakeGame = SnakeGame(snakeGUI, display_size)
     
     all_best_score = []
+    average = 10
+    
     for gen in tqdm(range(generations), disable=True):
         print("\nGenerations: " + str(gen))
         
@@ -19,9 +21,17 @@ def do_training():
         snakeGUI.setGen(gen)
         
         for index in tqdm(range(len(snakeList))):
-            
             snakeGUI.setSnakeNO(index)
-            fitness, score = snakeGame.play(snakeList[index])
+            avg_fitness = 0
+            avg_score = 0
+            
+            for _ in range(average):
+                fitness, score = snakeGame.play(snakeList[index])
+                avg_fitness += fitness
+                avg_score += score
+                
+            avg_fitness /= average    
+            avg_score /= average
             gen_score.append([snakeList[index], fitness, score])
 
         next_gen, best_fittness_score, best_model = GA.get_next_gen(gen_score)
@@ -53,9 +63,9 @@ def do_testing():
     snakeGUI.loopGUI(score)
     
 if __name__ == '__main__':
-    training = True   
-    display_size = 17
-    snakeNum = 2000
+    training = True
+    display_size = 21
+    snakeNum = 200
     generations = 100
     
     if training:

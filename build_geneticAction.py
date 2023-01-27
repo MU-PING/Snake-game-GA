@@ -9,41 +9,36 @@ Must be in the same file as tensorflow and before tensorflow is imported
 """
 
 import random
-from tqdm import tqdm
+import numpy as np
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense
 
-def generate(population, disable=True):
-    brains = []
-    for _ in tqdm(range(population), disable=disable):
-        model = Sequential()
-        model.add(Dense(units=16, input_shape=(24,), kernel_initializer='RandomNormal', activation='relu', bias_initializer='RandomNormal'))
-        model.add(Dense(units=16, kernel_initializer='RandomNormal', activation='relu', bias_initializer='RandomNormal'))
-        model.add(Dense(units=4, kernel_initializer='RandomNormal', activation='softmax', bias_initializer='RandomNormal'))
-        brains.append(model)
+def generateModel():
+    model = Sequential()
+    model.add(Dense(units=16, input_shape=(24,), kernel_initializer='RandomNormal', activation='relu', bias_initializer='RandomNormal'))
+    model.add(Dense(units=16, kernel_initializer='RandomNormal', activation='relu', bias_initializer='RandomNormal'))
+    model.add(Dense(units=4, kernel_initializer='RandomNormal', activation='softmax', bias_initializer='RandomNormal'))
+    return model
 
-    return brains
-
-def crossover(mom, dad, son_population):
-    mom_weight = mom.get_weights()
+def crossover(dad, mom):
     dad_weight = dad.get_weights()
-    son = generate(son_population)
+    mom_weight = mom.get_weights()
+    son = generateModel()
+    son_weight = mom.get_weights()
     
-    for count in range(son_population):        
-        son_weight = mom.get_weights()
-        for i in range(len(mom_weight)):
-            for j in range(len(mom_weight[i])):
-                if mom_weight[i][j].ndim > 0:
-                    for k in range(len(mom_weight[i][j])):
-                        son_weight[i][j, k] = random.choice([dad_weight[i][j, k], mom_weight[i][j, k]])
-                        
-                else:
-                    son_weight[i][j] = random.choice([dad_weight[i][j], mom_weight[i][j]])
-            
-        son[count].set_weights(son_weight)
+    for i in range(len(dad_weight)):
+        for j in range(len(dad_weight[i])):
+            if dad_weight[i][j].ndim > 0:
+                for k in range(len(dad_weight[i][j])):
+                    son_weight[i][j, k] = random.choice([dad_weight[i][j, k], mom_weight[i][j, k]])
+                    
+            else:
+                son_weight[i][j] = random.choice([dad_weight[i][j], mom_weight[i][j]])
+        
+    son.set_weights(son_weight)
     return son
 
-def mutate(model, mutate_rate=0.1):
+def mutate(model, mutate_rate=0.05):
     weight = model.get_weights()
     
     for i in range(len(weight)):
@@ -73,36 +68,29 @@ def mutate(model, mutate_rate=0.1):
 
     model.set_weights(weight)
 
-def get_next_gen(gen_score): #gen_score: [brain, score]
+def get_next_gen(gen_score): #gen_score: [brain, fitness, score]
     gen_score.sort(key= lambda x: x[1], reverse=True) # sorted by score
+    gen_score = np.array(gen_score)
+    gen_score_index = np.array([i for i in range(gen_score.shape[0])])
+    gen_score_fittness = gen_score[:, 1].astype('float64')
+    probabilities = gen_score_fittness / np.sum(gen_score_fittness)
     
     best_model = gen_score[0][0]
     best_fittness_score = gen_score[0][2]
     
     next_gen = []
-    for i in range(10):
+    parentsGen = 5
+    for i in range(parentsGen):
         next_gen.append(gen_score[i][0])
-        
-    #crossover no1 no2
-    son = crossover(gen_score[0][0], gen_score[1][0], 600)    
-    next_gen += son
     
-    #crossover no1 no3
-    son = crossover(gen_score[0][0], gen_score[2][0], 500)    
-    next_gen += son
-        
-    #crossover no2 no3
-    son = crossover(gen_score[1][0], gen_score[2][0], 400)    
-    next_gen += son
+    for i in range(200-parentsGen):
+        dad = gen_score[np.random.choice(gen_score_index, p=probabilities)][0]
+        mom = gen_score[np.random.choice(gen_score_index, p=probabilities)][0]
+        next_gen.append(crossover(dad, mom))
     
-    #crossover no2 no4
-    son = crossover(gen_score[1][0], gen_score[3][0], 300)    
-    next_gen += son
-    
-    noMutationIndex = 3
+    noMutationIndex = 1
     for i in range(noMutationIndex, len(next_gen)):
-        if random.random() < 0.2: # mutate rate = 0.2
-            mutate(next_gen[i])
+        mutate(next_gen[i])
     
     return next_gen, best_fittness_score, best_model
 

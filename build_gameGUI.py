@@ -21,18 +21,22 @@ class GameGUI():
         self.display = pygame.display.set_mode((self.size, self.size+self.height))
         
         # font
+        self.copyrightText = pygame.font.Font('font.ttf', 12)
         self.infoText = pygame.font.Font('font.ttf', 14)
+        self.finalText = pygame.font.Font('font.ttf', 38)
         self.Gen_TextSurf = self.infoText.render("Generation: Undefined", True, (0, 0, 0))
-        self.Snake_TextSurf = self.infoText.render("Snake NO: Undefined", True, (0, 0, 0))
+        self.Snake_TextSurf = self.infoText.render("Snake No.: Undefined", True, (0, 0, 0))
         self.Score_TextSurf = self.infoText.render("Score: Undefined", True, (0, 0, 0))
-        
+        self.CopyRight_TextSurf = self.copyrightText.render("© 2023 Mu-Ping", True, (0, 0, 0))
+        self.final_TextSurf = self.finalText.render("Game Over", True, (0, 0, 0))
+        self.final_TextRect = self.final_TextSurf.get_rect()
+        self.final_TextRect.center = ((self.size/2),(self.size/2))
+       
         # color
         self.ground_color = (193, 255, 193)
         self.apple_color = (255, 0, 0)
         self.snake_head_color = (0, 139, 0)
         self.snake_color = (60, 179, 113)
-        self.sensor_color = (173, 173, 173)
-        self.sensor_apple_color = (102, 102, 102)
 
     def drawFrame(self, frames):
         
@@ -65,6 +69,7 @@ class GameGUI():
         self.display.blit(self.Gen_TextSurf, (10, 8+self.size))
         self.display.blit(self.Snake_TextSurf, (10, 33+self.size))
         self.display.blit(self.Score_TextSurf, (10, 58+self.size))
+        self.display.blit(self.CopyRight_TextSurf, (245, 65+self.size))
     
     def drawSnake(self, snake_position):
         pygame.draw.rect(self.display, self.snake_head_color, pygame.Rect(snake_position[0][0]*self.unit+2, snake_position[0][1]*self.unit+2, 16, 16))
@@ -74,11 +79,14 @@ class GameGUI():
     def drawApple(self, apple_position):
         pygame.draw.rect(self.display, self.apple_color, pygame.Rect(apple_position[0]*self.unit+2, apple_position[1]*self.unit+2, 16, 16))
     
+    def drawFinalText(self):
+        self.display.blit(self.final_TextSurf, self.final_TextRect)
+    
     def setGen(self, gen):
         self.Gen_TextSurf = self.infoText.render("Generation: "+str(gen), True, (0, 0, 0))
         
     def setSnakeNO(self, snakeNO):
-        self.Snake_TextSurf = self.infoText.render("Snake NO: "+str(snakeNO), True, (0, 0, 0))    
+        self.Snake_TextSurf = self.infoText.render("Snake No.: "+str(snakeNO), True, (0, 0, 0))    
     
     def loopGUI(self, score):
         while 1 :
@@ -88,8 +96,11 @@ class GameGUI():
                     sys.exit()                    
             self.drawBackground()
             self.drawGrid()
+            self.drawFinalText()
             self.drawInfo(score)
-                    
+            
+            pygame.display.update()
+            
     def quitGUI(self):
         pygame.quit()  
     
