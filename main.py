@@ -12,7 +12,7 @@ def do_training():
     snakeGame = SnakeGame(snakeGUI, display_size)
     
     all_best_score = []
-    average = 10
+    average = 1
     
     for gen in tqdm(range(generations), disable=True):
         print("\nGenerations: " + str(gen))
@@ -65,7 +65,7 @@ def do_testing():
 if __name__ == '__main__':
     training = True
     display_size = 21
-    snakeNum = 200
+    snakeNum = 2000
     generations = 100
     
     if training:

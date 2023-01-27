@@ -47,7 +47,7 @@ class GameGUI():
 
         self.drawBackground()
         self.drawGrid()
-        self.drawInfo(frames.score)
+        self.drawInfo(frames.apple)
         self.drawSnake(frames.snake_position)
         self.drawApple(frames.apple_position)
         

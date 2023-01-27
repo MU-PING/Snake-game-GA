@@ -10,14 +10,17 @@ Must be in the same file as tensorflow and before tensorflow is imported
 
 import random
 import numpy as np
+import tensorflow as tf
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense
 
+
 def generateModel():
+    initializers = tf.keras.initializers.RandomUniform(-1, 1)
     model = Sequential()
-    model.add(Dense(units=16, input_shape=(24,), kernel_initializer='RandomNormal', activation='relu', bias_initializer='RandomNormal'))
-    model.add(Dense(units=16, kernel_initializer='RandomNormal', activation='relu', bias_initializer='RandomNormal'))
-    model.add(Dense(units=4, kernel_initializer='RandomNormal', activation='softmax', bias_initializer='RandomNormal'))
+    model.add(Dense(units=16, input_shape=(24,), kernel_initializer=initializers, activation='relu', bias_initializer=initializers))
+    model.add(Dense(units=16, kernel_initializer=initializers, activation='relu', bias_initializer=initializers))
+    model.add(Dense(units=4, kernel_initializer=initializers, activation='softmax', bias_initializer=initializers))
     return model
 
 def crossover(dad, mom):
@@ -79,11 +82,11 @@ def get_next_gen(gen_score): #gen_score: [brain, fitness, score]
     best_fittness_score = gen_score[0][2]
     
     next_gen = []
-    parentsGen = 5
+    parentsGen = 10
     for i in range(parentsGen):
         next_gen.append(gen_score[i][0])
     
-    for i in range(200-parentsGen):
+    for i in range(2000-parentsGen):
         dad = gen_score[np.random.choice(gen_score_index, p=probabilities)][0]
         mom = gen_score[np.random.choice(gen_score_index, p=probabilities)][0]
         next_gen.append(crossover(dad, mom))
