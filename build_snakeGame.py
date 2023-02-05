@@ -11,12 +11,17 @@ class Frames():
         self.crashed = False
         self.apple = 0
         self.alive = 0
-        self.leftstep = 100
-
+        self.leftstep = 30
+        
         # direction
         self.prev_direction = 1 
         self.direction = 1
-
+        
+        # sensor
+        self.feedback_apple = None
+        self.feedback_snake = None
+        self.feedback_wall = None
+        
         for body in self.snake_position:
             self.map[body[0], body[1]] = 1
                     
@@ -45,19 +50,18 @@ class SnakeGame():
             frames.alive += 1
             frames.leftstep -= 1
             
-            self.gameGUI.drawFrame(frames)
-            
-            feedback_apple, feedback_snake, feedback_wall = self.sensor(frames)
-            feedback = np.array(feedback_apple + feedback_snake + feedback_wall)
+            frames.feedback_apple, frames.feedback_snake, frames.feedback_wall = self.sensor(frames)
+            feedback = np.array(frames.feedback_apple + frames.feedback_snake + frames.feedback_wall)
             
             # What's the difference between Model methods predict() and __call__()?(Google) 
             predict_direction = snake.predict(feedback.reshape(1, -1), verbose=0) # brain predict next direction
             direction = np.argmax(predict_direction, axis=1)[0]
             
+            self.gameGUI.drawFrame(frames)
             self.next_frame(frames, direction, apple_generator)
 
             if frames.crashed==True: break;
-
+   
         return  self.calc_fitness(frames.apple, frames.alive), frames.apple
     
     def calc_fitness(self, apple, alive):
@@ -95,8 +99,8 @@ class SnakeGame():
         if snake_head == frames.apple_position:
             frames.apple_position = next(apple_generator)
             frames.map[frames.apple_position[0], frames.apple_position[1]] = 2
-            frames.apple += 100
-            frames.leftstep += 100
+            frames.apple += 1
+            frames.leftstep += 30
     
         else:
             discard = frames.snake_position.pop()
@@ -150,22 +154,67 @@ class SnakeGame():
 
             if something == 2 and feedback_apple[0] == 0:
                 feedback_apple[0] = 1
-            
+        
+        # bottom
+        for step in range(1, self.display_size+1):
+            target = snake_head_h + step 
+
+            if(target == self.display_size): 
+                feedback_wall[1] = 1/step
+                break
+
+            something = framesMap[snake_head_w, target]
+            if something == 1 and feedback_snake[1] == 0:
+                feedback_snake[1] = 1/step
+
+            if something == 2 and feedback_apple[1] == 0:
+                feedback_apple[1] = 1
+        
+        # left
+        for step in range(1, self.display_size+1):
+            target = snake_head_w - step 
+
+            if(target < 0): 
+                feedback_wall[2] = 1/step
+                break
+
+            something = framesMap[target, snake_head_h]
+            if something == 1 and feedback_snake[2] == 0:
+                feedback_snake[2] = 1/step
+
+            if something == 2 and feedback_apple[2] == 0:
+                feedback_apple[2] = 1
+
+        # right
+        for step in range(1, self.display_size+1):
+            target = snake_head_w + step 
+
+            if(target == self.display_size): 
+                feedback_wall[3] = 1/step
+                break
+
+            something = framesMap[target, snake_head_h]
+            if something == 1 and feedback_snake[3] == 0:
+                feedback_snake[3] = 1/step
+
+            elif something == 2 and feedback_apple[3] == 0:
+                feedback_apple[3] = 1
+                
         # topleft
         for step in range(1, self.display_size+1):
             target_w = snake_head_w - step 
             target_h = snake_head_h - step 
 
             if(target_w < 0 or target_h < 0): 
-                feedback_wall[1] = 1/step
+                feedback_wall[4] = 1/step
                 break
 
             something = framesMap[target_w, target_h]
-            if something == 1 and feedback_snake[1] == 0:
-                feedback_snake[1] = 1/step
+            if something == 1 and feedback_snake[4] == 0:
+                feedback_snake[4] = 1/step
 
-            if something == 2 and feedback_apple[1] == 0:
-                feedback_apple[1] = 1
+            if something == 2 and feedback_apple[4] == 0:
+                feedback_apple[4] = 1
         
         
         # topright
@@ -174,61 +223,16 @@ class SnakeGame():
             target_h = snake_head_h - step 
 
             if(target_w == self.display_size or target_h < 0): 
-                feedback_wall[2] = 1/step
-                break
-
-            something = framesMap[target_w, target_h]
-            if something == 1 and feedback_snake[2] == 0:
-                feedback_snake[2] = 1/step
-
-            if something == 2 and feedback_apple[2] == 0:
-                feedback_apple[2] = 1
-
-        # left
-        for step in range(1, self.display_size+1):
-            target = snake_head_w - step 
-
-            if(target < 0): 
-                feedback_wall[3] = 1/step
-                break
-
-            something = framesMap[target, snake_head_h]
-            if something == 1 and feedback_snake[3] == 0:
-                feedback_snake[3] = 1/step
-
-            if something == 2 and feedback_apple[3] == 0:
-                feedback_apple[3] = 1
-
-        # right
-        for step in range(1, self.display_size+1):
-            target = snake_head_w + step 
-
-            if(target == self.display_size): 
-                feedback_wall[4] = 1/step
-                break
-
-            something = framesMap[target, snake_head_h]
-            if something == 1 and feedback_snake[4] == 0:
-                feedback_snake[4] = 1/step
-
-            elif something == 2 and feedback_apple[4] == 0:
-                feedback_apple[4] = 1
-
-        # bottom
-        for step in range(1, self.display_size+1):
-            target = snake_head_h + step 
-
-            if(target == self.display_size): 
                 feedback_wall[5] = 1/step
                 break
 
-            something = framesMap[snake_head_w, target]
+            something = framesMap[target_w, target_h]
             if something == 1 and feedback_snake[5] == 0:
                 feedback_snake[5] = 1/step
 
             if something == 2 and feedback_apple[5] == 0:
                 feedback_apple[5] = 1
-                      
+                 
         # bottomleft
         for step in range(1, self.display_size+1):
             target_w = snake_head_w - step 

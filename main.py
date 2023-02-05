@@ -32,7 +32,7 @@ def do_training():
                 
             avg_fitness /= average    
             avg_score /= average
-            gen_score.append([snakeList[index], fitness, score])
+            gen_score.append([snakeList[index], avg_fitness, avg_score])
 
         next_gen, best_fittness_score, best_model = GA.get_next_gen(gen_score)
         all_best_score.append(best_fittness_score)
@@ -58,9 +58,9 @@ def do_testing():
     snakeGUI = GameGUI("Testing ", display_size)
     snakeGame = SnakeGame(snakeGUI, display_size)
     
-    snakeGUI.setSnakeNO("BestSnake")
     fitness, score = snakeGame.play(bestModel)
-    snakeGUI.loopGUI(score)
+    snakeGUI.drawFinalText()    
+    snakeGUI.maintain()
     
 if __name__ == '__main__':
     training = True
