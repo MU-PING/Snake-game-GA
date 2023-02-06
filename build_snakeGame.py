@@ -9,9 +9,9 @@ class Frames():
         self.map = np.zeros((size, size))
         self.snake_position = snake_position
         self.crashed = False
-        self.apple = 0
+        self.score = 3
         self.alive = 0
-        self.leftstep = 30
+        self.leftstep = 100
         
         # direction
         self.prev_direction = 1 
@@ -62,14 +62,14 @@ class SnakeGame():
 
             if frames.crashed==True: break;
    
-        return  self.calc_fitness(frames.apple, frames.alive), frames.apple
+        return  self.calc_fitness(frames.score, frames.alive), frames.score
     
-    def calc_fitness(self, apple, alive):
-        if apple < 10:
-            fitness = math.floor(alive*alive) * math.pow(2, apple)
+    def calc_fitness(self, score, alive):
+        if score < 10:
+            fitness = math.floor(alive*alive) * math.pow(2, score)
             
         else:
-            fitness = math.floor(alive*alive) * math.pow(2, 10) * (apple-9)
+            fitness = math.floor(alive*alive) * math.pow(2, 10) * (score-9)
             
         return fitness
     
@@ -99,8 +99,8 @@ class SnakeGame():
         if snake_head == frames.apple_position:
             frames.apple_position = next(apple_generator)
             frames.map[frames.apple_position[0], frames.apple_position[1]] = 2
-            frames.apple += 1
-            frames.leftstep += 30
+            frames.score += 1
+            frames.leftstep += 100
     
         else:
             discard = frames.snake_position.pop()

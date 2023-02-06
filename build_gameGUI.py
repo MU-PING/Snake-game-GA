@@ -81,7 +81,7 @@ class GameGUI():
         self.drawGrid()
         self.drawSnake(frames.snake_position)
         self.drawApple(frames.apple_position)
-        self.drawInfo(frames.apple)
+        self.drawInfo(frames.score)
         self.drawSensor(frames.feedback_apple, frames.feedback_snake, frames.feedback_wall)
     
         pygame.display.update()
@@ -94,9 +94,9 @@ class GameGUI():
             for y in range(0, self.size, self.unit):
                 pygame.draw.rect(self.display, self.grid_color, pygame.Rect(x, y, self.unit, self.unit), 1)
     
-    def drawInfo(self, apple):
+    def drawInfo(self, score):
         pygame.draw.rect(self.display, self.info_color, pygame.Rect(0, self.size, self.size, self.height))
-        Apple_TextSurf = self.infoText.render("Apple: "+str(apple), True, (0, 0, 0))
+        Apple_TextSurf = self.infoText.render("Score: "+str(score), True, (0, 0, 0))
         
         # render
         self.display.blit(self.Gen_TextSurf, (10, self.Gen_y))

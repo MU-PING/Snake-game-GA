@@ -18,7 +18,7 @@ from tensorflow.keras.layers import Dense
 def generateModel():
     initializers = tf.keras.initializers.RandomUniform(-1, 1)
     model = Sequential()
-    model.add(Dense(units=24, input_shape=(24,), kernel_initializer=initializers, activation='relu', bias_initializer=initializers))
+    model.add(Dense(units=16, input_shape=(24,), kernel_initializer=initializers, activation='relu', bias_initializer=initializers))
     model.add(Dense(units=16, kernel_initializer=initializers, activation='relu', bias_initializer=initializers))
     model.add(Dense(units=4, kernel_initializer=initializers, activation='softmax', bias_initializer=initializers))
     return model
