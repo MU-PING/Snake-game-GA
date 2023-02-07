@@ -1,4 +1,3 @@
-import math
 import random
 import numpy as np
 
@@ -9,9 +8,9 @@ class Frames():
         self.map = np.zeros((size, size))
         self.snake_position = snake_position
         self.crashed = False
-        self.score = 3
+        self.score = 0
         self.alive = 0
-        self.leftstep = 100
+        self.leftstep = 50
         
         # direction
         self.prev_direction = 1 
@@ -65,11 +64,11 @@ class SnakeGame():
         return  self.calc_fitness(frames.score, frames.alive), frames.score
     
     def calc_fitness(self, score, alive):
-        if score < 10:
-            fitness = math.floor(alive*alive) * math.pow(2, score)
+        if score == 0:
+            fitness = alive
             
         else:
-            fitness = math.floor(alive*alive) * math.pow(2, 10) * (score-9)
+            fitness = alive * (score*10)
             
         return fitness
     
@@ -100,7 +99,10 @@ class SnakeGame():
             frames.apple_position = next(apple_generator)
             frames.map[frames.apple_position[0], frames.apple_position[1]] = 2
             frames.score += 1
-            frames.leftstep += 100
+            frames.leftstep += 50
+            
+            if frames.leftstep > 200:
+                frames.leftstep = 200
     
         else:
             discard = frames.snake_position.pop()

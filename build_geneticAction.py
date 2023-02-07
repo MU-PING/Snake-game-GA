@@ -18,8 +18,8 @@ from tensorflow.keras.layers import Dense
 def generateModel():
     initializers = tf.keras.initializers.RandomUniform(-1, 1)
     model = Sequential()
-    model.add(Dense(units=16, input_shape=(24,), kernel_initializer=initializers, activation='relu', bias_initializer=initializers))
-    model.add(Dense(units=16, kernel_initializer=initializers, activation='relu', bias_initializer=initializers))
+    model.add(Dense(units=18, input_shape=(24,), kernel_initializer=initializers, activation='relu', bias_initializer=initializers))
+    model.add(Dense(units=18, kernel_initializer=initializers, activation='relu', bias_initializer=initializers))
     model.add(Dense(units=4, kernel_initializer=initializers, activation='softmax', bias_initializer=initializers))
     return model
 
@@ -71,22 +71,23 @@ def mutate(model, mutate_rate=0.2):
 
     model.set_weights(weight)
 
-def get_next_gen(gen_score): #gen_score: [brain, fitness, score]
-    gen_score.sort(key= lambda x: x[1], reverse=True) # sorted by score
+def get_next_gen(gen_score, next_bestSnake): #gen_score: [brain, fitness, score]
+
+    gen_score.sort(key= lambda x: x[1], reverse=True) # sorted by fitness
     gen_score = np.array(gen_score)
     gen_score_index = np.array([i for i in range(gen_score.shape[0])])
     gen_score_fittness = gen_score[:, 1].astype('float64')
     probabilities = gen_score_fittness / np.sum(gen_score_fittness)
     
-    best_model = gen_score[0][0]
-    best_fittness_score = gen_score[0][2]
-    
     next_gen = []
-    parentsGen = 10
-    for i in range(parentsGen):
-        next_gen.append(gen_score[i][0])
     
-    for i in range(2000-parentsGen):
+    # set bestsnake
+    bestSnake = gen_score[0]
+    if bestSnake[1] > next_bestSnake[1]:
+        next_bestSnake = bestSnake
+    next_gen.append(next_bestSnake[0])
+    
+    for i in range(1000):
         dad = gen_score[np.random.choice(gen_score_index, p=probabilities)][0]
         mom = gen_score[np.random.choice(gen_score_index, p=probabilities)][0]
         next_gen.append(crossover(dad, mom))
@@ -95,7 +96,7 @@ def get_next_gen(gen_score): #gen_score: [brain, fitness, score]
     for i in range(noMutationIndex, len(next_gen)):
         mutate(next_gen[i])
     
-    return next_gen, best_fittness_score, best_model
+    return next_gen, next_bestSnake
 
     
     
