@@ -1,3 +1,4 @@
+import math
 import random
 import numpy as np
 
@@ -65,11 +66,11 @@ class SnakeGame():
     
     def calc_fitness(self, score, alive):
         if score == 0:
-            fitness = alive
-            
+            fitness = math.floor(alive*alive)
+        
         else:
-            fitness = alive * score*1000
-            
+            fitness = math.floor(alive*alive) * 1000 * (score*100)
+        
         return fitness
     
     def next_frame(self, frames, direction, apple_generator):
