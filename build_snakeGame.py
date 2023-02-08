@@ -68,7 +68,7 @@ class SnakeGame():
             fitness = alive
             
         else:
-            fitness = alive * (score*10)
+            fitness = alive * score*1000
             
         return fitness
     

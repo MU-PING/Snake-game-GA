@@ -41,7 +41,7 @@ def crossover(dad, mom):
     son.set_weights(son_weight)
     return son
 
-def mutate(model, mutate_rate=0.2):
+def mutate(model, mutate_rate=0.1):
     weight = model.get_weights()
     
     for i in range(len(weight)):
@@ -72,14 +72,12 @@ def mutate(model, mutate_rate=0.2):
     model.set_weights(weight)
 
 def get_next_gen(gen_score, next_bestSnake): #gen_score: [brain, fitness, score]
-
+    next_gen = []
     gen_score.sort(key= lambda x: x[1], reverse=True) # sorted by fitness
     gen_score = np.array(gen_score)
     gen_score_index = np.array([i for i in range(gen_score.shape[0])])
     gen_score_fittness = gen_score[:, 1].astype('float64')
     probabilities = gen_score_fittness / np.sum(gen_score_fittness)
-    
-    next_gen = []
     
     # set bestsnake
     bestSnake = gen_score[0]
@@ -90,11 +88,9 @@ def get_next_gen(gen_score, next_bestSnake): #gen_score: [brain, fitness, score]
     for i in range(1000):
         dad = gen_score[np.random.choice(gen_score_index, p=probabilities)][0]
         mom = gen_score[np.random.choice(gen_score_index, p=probabilities)][0]
-        next_gen.append(crossover(dad, mom))
-    
-    noMutationIndex = 1
-    for i in range(noMutationIndex, len(next_gen)):
-        mutate(next_gen[i])
+        son = crossover(dad, mom)
+        mutate(son)
+        next_gen.append(son)
     
     return next_gen, next_bestSnake
 
