@@ -66,7 +66,7 @@ def do_testing():
 if __name__ == '__main__':
     training = True
     display_size = 21
-    snakeNum = 1000
+    snakeNum = 2000
     generations = 100
     
     if training:
