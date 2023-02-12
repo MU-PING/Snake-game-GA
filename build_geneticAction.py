@@ -41,7 +41,7 @@ def crossover(dad, mom):
     son.set_weights(son_weight)
     return son
 
-def mutate(model, mutate_rate=0.2):
+def mutate(model, mutate_rate=0.05):
     weight = model.get_weights()
     
     for i in range(len(weight)):
