@@ -58,7 +58,7 @@ def do_training():
 def do_testing():
     print("Loading Best Model...")
     bestModel = tf.keras.models.load_model("bestModel.h5", compile=False)
-    snakeGUI = GameGUI("Testing ", display_size)
+    snakeGUI = GameGUI("Testing ", display_size, 30)
     snakeGame = SnakeGame(snakeGUI, display_size)
     
     fitness, score = snakeGame.play(bestModel)

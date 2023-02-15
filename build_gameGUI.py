@@ -2,14 +2,15 @@ import pygame, sys
 
 class GameGUI():
     
-    def __init__(self, train_or_test, size):
+    def __init__(self, train_or_test, size, framerate=None):
         #initialize pygame modules   
         pygame.init() 
         pygame.display.set_caption(train_or_test + 'SnakeAI Game')
         
         # initialize Clock
         self.clock= pygame.time.Clock() 
-        
+        self.framerate = framerate
+    
         # display game window
         self.unit = 20
         self.size = size * self.unit
@@ -72,10 +73,14 @@ class GameGUI():
 
     def drawFrame(self, frames):
         
+        if self.framerate:
+            self.clock.tick(self.framerate)
+            
         # check event
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                frames.crashed = True
+                pygame.quit()
+                sys.exit()          
 
         self.drawBackground()
         self.drawGrid()
