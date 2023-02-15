@@ -1,10 +1,12 @@
 import tensorflow as tf
 import build_geneticAction as GA
 import matplotlib.pyplot as plt
+from memory_profiler import profile
 from build_snakeGame import SnakeGame
 from build_gameGUI import GameGUI
 from tqdm import tqdm
 
+@profile
 def do_training():
     print("Initializing generation...")
     snakeList = [GA.generateModel() for _ in tqdm(range(snakeNum))]
@@ -13,7 +15,7 @@ def do_training():
     
     all_best_score = [0]
     next_bestSnake = [None, 0, 0]
-    average = 1
+    average = 10
     
     for gen in tqdm(range(generations), disable=True):
         print("\nGenerations: " + str(gen))
@@ -66,8 +68,8 @@ def do_testing():
 if __name__ == '__main__':
     training = True
     display_size = 21
-    snakeNum = 2000
-    generations = 100
+    snakeNum = 1000
+    generations = 200
     
     if training:
         do_training()

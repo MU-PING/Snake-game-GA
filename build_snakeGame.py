@@ -35,7 +35,7 @@ class SnakeGame():
         self.display_size = display_size
         self.start = int(self.display_size // 2)
         self.gameGUI = gameGUI
-    
+
     def play(self, snake):
         snake_position = [[self.start, self.start], [self.start-1, self.start], [self.start-2, self.start]]
         frames = Frames(snake_position, self.display_size)
@@ -54,7 +54,8 @@ class SnakeGame():
             feedback = np.array(frames.feedback_apple + frames.feedback_snake + frames.feedback_wall)
             
             # What's the difference between Model methods predict() and __call__()?(Google) 
-            predict_direction = snake.predict(feedback.reshape(1, -1), verbose=0) # brain predict next direction
+            # Using of __call__() or model(input) avoids memory leaks inside predict method which creates a data generator with one data item each time of execution and doesn't release memory.
+            predict_direction = snake(feedback.reshape(1, -1)) # brain predict next direction
             direction = np.argmax(predict_direction, axis=1)[0]
             
             self.gameGUI.drawFrame(frames)
@@ -69,9 +70,8 @@ class SnakeGame():
             fitness = math.floor(alive*alive)
         
         else:
-            fitness = math.floor(alive*alive) * score*100000
-            
-        
+            fitness = math.floor(alive*alive) * score*1000
+
         return fitness
     
     def next_frame(self, frames, direction, apple_generator):
