@@ -27,7 +27,6 @@ class GameGUI():
         # font
         self.copyrightText = pygame.font.Font('Font/font.ttf', 12)
         self.infoText = pygame.font.Font('Font/font.ttf', 14)
-        self.finalText = pygame.font.Font('Font/font.ttf', 38)
         
         # text and position
         self.Gen_y = 8 + self.size
@@ -58,9 +57,6 @@ class GameGUI():
         
         self.CopyRight_y = 65 + self.size
         self.CopyRight_TextSurf = self.copyrightText.render("© 2023 Mu-Ping", True, (0, 0, 0))
-        self.final_TextSurf = self.finalText.render("Game Over", True, (0, 0, 0))
-        self.final_TextRect = self.final_TextSurf.get_rect()
-        self.final_TextRect.center = ((self.size/2),(self.size/2))
        
         # color
         self.ground_color = (193, 255, 193)
@@ -143,15 +139,26 @@ class GameGUI():
     def drawApple(self, apple_position):
         pygame.draw.rect(self.display, self.apple_color, pygame.Rect(apple_position[0]*self.unit+2, apple_position[1]*self.unit+2, 16, 16))
     
-    def drawFinalText(self):
-        self.display.blit(self.final_TextSurf, self.final_TextRect)
+    def drawFinalText(self, avg_score):
+        finalText = pygame.font.Font('Font/font.ttf', 38) 
+        final_TextSurf = finalText.render("Game Over", True, (0, 0, 0))
+        final_TextRect = final_TextSurf.get_rect()
+        final_TextRect.center = ((self.size/2), (self.size/2))
+        self.display.blit(final_TextSurf, final_TextRect)
+        
+        finalScore = pygame.font.Font('Font/font.ttf', 18) 
+        final_ScoreSurf = finalScore.render("Average Score: "+str(avg_score), True, (0, 0, 0))
+        final_ScoreRect = final_ScoreSurf.get_rect()
+        final_ScoreRect.center = ((self.size/2), (self.size/2)+50)
+        self.display.blit(final_ScoreSurf, final_ScoreRect)
+        
         pygame.display.update()
         
     def setGen(self, gen):
-        self.Gen_TextSurf = self.infoText.render("Generation: "+str(gen), True, (0, 0, 0))
+        self.Gen_TextSurf = self.infoText.render("Generation: "+gen, True, (0, 0, 0))
         
     def setSnakeNO(self, snakeNO):
-        self.SnakeNo_TextSurf = self.infoText.render("Snake No.: "+str(snakeNO), True, (0, 0, 0))    
+        self.SnakeNo_TextSurf = self.infoText.render("Snake No.: "+snakeNO, True, (0, 0, 0))    
     
     def maintain(self):
         while 1 :

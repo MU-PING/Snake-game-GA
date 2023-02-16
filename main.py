@@ -6,8 +6,8 @@ from build_snakeGame import SnakeGame
 from build_gameGUI import GameGUI
 from tqdm import tqdm
 
-@profile
-def do_training():
+#@profile
+def do_training(average=10):
     print("Initializing generation...")
     snakeList = [GA.generateModel() for _ in tqdm(range(snakeNum))]
     snakeGUI = GameGUI("Training ", display_size)
@@ -15,27 +15,26 @@ def do_training():
     
     all_best_score = [0]
     next_bestSnake = [None, 0, 0]
-    average = 10
     
-    for gen in tqdm(range(generations), disable=True):
+    for gen in tqdm(range(1, generations+1), disable=True):
         print("\nGenerations: " + str(gen))
         
         gen_score = []
-        snakeGUI.setGen(gen)
+        snakeGUI.setGen(str(gen))
         
-        for index in tqdm(range(len(snakeList))):
-            snakeGUI.setSnakeNO(index)
+        for index in tqdm(range(1, len(snakeList)+1)):
             avg_fitness = 0
             avg_score = 0
             
-            for _ in range(average):
-                fitness, score = snakeGame.play(snakeList[index])
+            for avg in range(1, average+1):
+                snakeGUI.setSnakeNO(str(index)+'-'+str(avg))
+                fitness, score = snakeGame.play(snakeList[index-1])
                 avg_fitness += fitness
                 avg_score += score
                 
             avg_fitness /= average    
             avg_score /= average
-            gen_score.append([snakeList[index], avg_fitness, avg_score])
+            gen_score.append([snakeList[index-1], avg_fitness, avg_score])
 
         next_gen, next_bestSnake = GA.get_next_gen(gen_score, next_bestSnake)
         tf.keras.models.save_model(next_bestSnake[0], "bestModel.h5")
@@ -58,15 +57,21 @@ def do_training():
 def do_testing():
     print("Loading Best Model...")
     bestModel = tf.keras.models.load_model("bestModel.h5", compile=False)
-    snakeGUI = GameGUI("Testing ", display_size, 30)
+    snakeGUI = GameGUI("Testing ", display_size, 160)
     snakeGame = SnakeGame(snakeGUI, display_size)
     
-    fitness, score = snakeGame.play(bestModel)
-    snakeGUI.drawFinalText()    
+    average = 10
+    avg_score = 0
+    for _ in range(average):
+        _, score = snakeGame.play(bestModel)
+        avg_score += score
+    avg_score /= average
+
+    snakeGUI.drawFinalText(avg_score)    
     snakeGUI.maintain()
     
 if __name__ == '__main__':
-    training = True
+    training = 1
     display_size = 21
     snakeNum = 1000
     generations = 200
