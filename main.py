@@ -48,7 +48,7 @@ def do_training(average=10):
         plt.title("Score Evolving")
         plt.xlabel("Generation")
         plt.ylabel("Score")
-        plt.plot(all_best_score, label="Best Score")
+        plt.plot(all_best_score, 'o--', label="Best Score", ms = 5, linewidth=1, mfc='r')
         plt.legend()
         plt.show()
     
@@ -57,12 +57,13 @@ def do_training(average=10):
 def do_testing():
     print("Loading Best Model...")
     bestModel = tf.keras.models.load_model("bestModel.h5", compile=False)
-    snakeGUI = GameGUI("Testing ", display_size, 160)
+    snakeGUI = GameGUI("Testing ", display_size, 200)
     snakeGame = SnakeGame(snakeGUI, display_size)
     
     average = 10
     avg_score = 0
-    for _ in range(average):
+    for avg in range(average):
+        snakeGUI.setSnakeNO('BestSnake-'+str(avg))
         _, score = snakeGame.play(bestModel)
         avg_score += score
     avg_score /= average

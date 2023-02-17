@@ -70,7 +70,7 @@ class SnakeGame():
             fitness = math.floor(alive*alive)
         
         else:
-            fitness = math.floor(alive*alive) * score*100000
+            fitness = math.floor(alive*alive) * score*10000
 
         return fitness
     
