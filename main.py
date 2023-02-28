@@ -7,7 +7,7 @@ from build_gameGUI import GameGUI
 from tqdm import tqdm
 
 #@profile
-def do_training(average=10):
+def do_training(average=1):
     print("Initializing generation...")
     snakeList = [GA.generateModel() for _ in tqdm(range(snakeNum))]
     snakeGUI = GameGUI("Training ", display_size)
@@ -44,11 +44,11 @@ def do_training(average=10):
         snakeList = next_gen
     
         # plot Score Evolving
-        plt.figure(figsize=(7, 5))
-        plt.title("Score Evolving")
-        plt.xlabel("Generation")
-        plt.ylabel("Score")
-        plt.plot(all_best_score, 'o--', label="Best Score", ms = 5, linewidth=1, mfc='r')
+        plt.figure(figsize=(25, 8))
+        plt.title("SnakeAI Average Score Evolving")
+        plt.xlabel("Evolving Generation")
+        plt.ylabel("Average Score")
+        plt.plot(all_best_score, 'o--', label="Best Score", ms=6, linewidth=1.5, mfc='#ff7f0e')
         plt.legend()
         plt.show()
     
@@ -74,8 +74,8 @@ def do_testing():
 if __name__ == '__main__':
     training = 1
     display_size = 21
-    snakeNum = 1000
-    generations = 200
+    snakeNum = 2000
+    generations = 150
     
     if training:
         do_training()

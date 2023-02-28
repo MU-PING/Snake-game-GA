@@ -11,7 +11,7 @@ class Frames():
         self.crashed = False
         self.score = 0
         self.alive = 0
-        self.leftstep = 50
+        self.leftstep = 100
         
         # direction
         self.prev_direction = 1 
@@ -66,22 +66,22 @@ class SnakeGame():
         return  self.calc_fitness(frames.score, frames.alive), frames.score
     
     def calc_fitness(self, score, alive):
-        if score == 0:
-            fitness = math.floor(alive*alive)
+        if score < 10:
+            fitness = math.floor(alive*alive) * pow(2, score)
         
         else:
-            fitness = math.floor(alive*alive) * score*10000
+            fitness = math.floor(alive*alive) * pow(2, 10) * (score-9)
 
         return fitness
     
     def next_frame(self, frames, direction, apple_generator):
-        if direction == 0 and frames.prev_direction!= 1:
+        if direction == 0 and frames.prev_direction != 1:
             frames.direction = 0
-        elif direction == 1 and frames.prev_direction!= 0: 
+        elif direction == 1 and frames.prev_direction != 0: 
             frames.direction = 1
-        elif direction == 3 and frames.prev_direction!= 2: 
+        elif direction == 3 and frames.prev_direction != 2: 
             frames.direction = 3
-        elif direction == 2 and frames.prev_direction!= 3: 
+        elif direction == 2 and frames.prev_direction != 3: 
             frames.direction = 2
 
         frames.prev_direction = frames.direction
@@ -101,10 +101,10 @@ class SnakeGame():
             frames.apple_position = next(apple_generator)
             frames.map[frames.apple_position[0], frames.apple_position[1]] = 2
             frames.score += 1
-            frames.leftstep += 50
+            frames.leftstep += 100
             
-            if frames.leftstep > 200:
-                frames.leftstep = 200
+            if frames.leftstep > 500:
+                frames.leftstep = 500
     
         else:
             discard = frames.snake_position.pop()
